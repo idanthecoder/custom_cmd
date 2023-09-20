@@ -36,9 +36,9 @@ def print_credits():
         print("\n")
 
 
-def ls(pathname):
+def ls(pattern):
     try:
-        res = glob.glob(pathname)
+        res = glob.glob(pattern)
     except TypeError:
         res = []
     return '\n'.join(res)
@@ -66,12 +66,27 @@ def main():
     run = True
     while run:
         prompt = pwd()
-        if prompt.lower() in internal_dict:
-            internal_dict[prompt.lower()]()
-        if prompt.lower().__contains__(" "):
-            splitted = prompt.lower().split(" ")
-            if splitted[0] not in internal_dict:
-                continue
+        if prompt.lower().__contains__("ls"):
+            if prompt.lower() == "ls":
+                print(ls(r"*"))
+            else:
+                # needs fixing
+                split_data = prompt.lower().split(" ")
+                var = ls(fr"{split_data}\*")
+                print(var)
+        if prompt.lower() == "exit":
+            exit_cmd()
+
+        #if prompt.lower() in internal_dict:
+        #    if prompt.lower() == "ls":
+        #        print(internal_dict[prompt.lower()]("*"))
+        #    else:
+        #        internal_dict[prompt.lower()]()
+        #if prompt.lower().__contains__(" "):
+        #    splitted = prompt.lower().split(" ")
+        #    if splitted[0] not in internal_dict:
+        #        continue
+
 
 
 if __name__ == "__main__":
