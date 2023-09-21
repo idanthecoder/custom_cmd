@@ -6,6 +6,8 @@ import subprocess
 PATH = [r"c:\temp", r"c:\windows\..."]
 
 
+
+
 def print_credits():
     print(r'''  ____  _          _ _   _   _ _____ ___                                             
  / ___|| |__   ___| | | | \ | | ____/ _ \                                            
@@ -44,9 +46,19 @@ def ls(pattern):
     return '\n'.join(res)
 
 
+def remove_suffix_until_char(word, char_flag):
+    new_word = []
+    last_slash_pos = word.rindex(char_flag)
+    for i in range(0, last_slash_pos):
+        new_word.append(word[i])
+    return "".join(new_word)
+
+
 def cd(directory):
     if directory == "..":
-        pass
+        os.chdir(remove_suffix_until_char(os.getcwd(), "\\"))
+    else:
+        os.chdir(directory)
 
 
 def exit_cmd():
@@ -62,6 +74,7 @@ def pwd():
 
 
 def main():
+    original_dir = os.getcwd()
     print_credits()
     run = True
     while run:
@@ -72,10 +85,18 @@ def main():
             else:
                 # needs fixing
                 split_data = prompt.lower().split(" ")
-                var = ls(fr"{split_data}\*")
-                print(var)
-        if prompt.lower() == "exit":
+                os.chdir(split_data[1])
+                print(ls(r"*"))
+                os.chdir(original_dir)
+        elif prompt.lower() == "exit":
             exit_cmd()
+        elif prompt.lower().__contains__("cd"):
+            if prompt.lower() == "cd":
+                print(os.getcwd())
+            else:
+                split_data = prompt.lower().split(" ")
+                cd(split_data[1])
+
 
         #if prompt.lower() in internal_dict:
         #    if prompt.lower() == "ls":
