@@ -129,13 +129,16 @@ def main():
     while run:
         prompt = pwd()
         if prompt.lower().startswith("ls"):
-            if prompt.lower() == "ls":
-                print(ls(r"*"))
-            else:
-                split_data = prompt.lower().split(" ")
-                os.chdir(split_data[1])
-                print(ls(r"*"))
-                os.chdir(original_dir)
+            try:
+                if prompt.lower() == "ls":
+                    print(ls(r"*"))
+                else:
+                    split_data = prompt.lower().split(" ")
+                    os.chdir(split_data[1])
+                    print(ls(r"*"))
+                    os.chdir(original_dir)
+            except OSError:
+                print("Invalid Syntax!")
         elif prompt.lower() == "exit":
             exit_cmd()
         elif prompt.lower().startswith("cd"):
