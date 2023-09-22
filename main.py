@@ -5,7 +5,9 @@ import subprocess
 
 PATH = [r"c:\temp", r"c:\windows\..."]
 
-ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).stdout.splitlines()
+ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+                                    text=True).stdout.splitlines()
+
 
 def print_credits():
     print(r'''  ____  _          _ _   _   _ _____ ___                                             
@@ -62,14 +64,14 @@ def cd(directory):
 
 def filter_big_str(lst, filt):
     temp_lst = []
-    
+
     for i in range(0, len(lst)):
         if lst[i].lower().startswith(filt):
             temp_lst.append(lst[i])
-    return "\n".join(temp_lst)    
+    return "\n".join(temp_lst)
 
 
-#def set_cmd(filt):
+# def set_cmd(filt):
 #    command = 'set'
 #
 #    try:
@@ -126,11 +128,10 @@ def main():
     run = True
     while run:
         prompt = pwd()
-        if prompt.lower().__contains__("ls"):
+        if prompt.lower().startswith("ls"):
             if prompt.lower() == "ls":
                 print(ls(r"*"))
             else:
-                # needs fixing
                 split_data = prompt.lower().split(" ")
                 os.chdir(split_data[1])
                 print(ls(r"*"))
@@ -149,19 +150,16 @@ def main():
             else:
                 split_data = prompt.lower().split(" ")
                 print(set_cmd(split_data[1]))
-                
 
-
-        #if prompt.lower() in internal_dict:
+        # if prompt.lower() in internal_dict:
         #    if prompt.lower() == "ls":
         #        print(internal_dict[prompt.lower()]("*"))
         #    else:
         #        internal_dict[prompt.lower()]()
-        #if prompt.lower().__contains__(" "):
+        # if prompt.lower().__contains__(" "):
         #    splitted = prompt.lower().split(" ")
         #    if splitted[0] not in internal_dict:
         #        continue
-
 
 
 if __name__ == "__main__":
