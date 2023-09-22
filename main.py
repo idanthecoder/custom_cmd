@@ -5,8 +5,7 @@ import subprocess
 
 PATH = [r"c:\temp", r"c:\windows\..."]
 
-
-
+ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).stdout.splitlines()
 
 def print_credits():
     print(r'''  ____  _          _ _   _   _ _____ ___                                             
@@ -61,6 +60,54 @@ def cd(directory):
         os.chdir(directory)
 
 
+def filter_big_str(lst, filt):
+    temp_lst = []
+    
+    for i in range(0, len(lst)):
+        if lst[i].lower().startswith(filt):
+            temp_lst.append(lst[i])
+    return "\n".join(temp_lst)    
+
+
+#def set_cmd(filt):
+#    command = 'set'
+#
+#    try:
+#        # Run the 'set' command and capture the output
+#        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+#
+#        # Check if the command was successful
+#        if result.returncode == 0:
+#            # Print the output of the 'set' command
+#            if filt == "":
+#                return result.stdout
+#            elif filt.__contains__("="):
+#                result.stdout.splitlines().append(filt.strip())
+#                return ""
+#            else:
+#                return filter_big_str(result.stdout.splitlines(), filt)
+#        else:
+#            # Print any error messages
+#            print("Error:", result.stderr)
+#
+#    except Exception as e:
+#        print("An error occurred:", str(e))
+
+def set_cmd(filt):
+    try:
+        # Print the output of the 'set' command
+        if filt == "":
+            return "\n".join(ENVIRONMENT_VALUES)
+        elif filt.__contains__("="):
+            ENVIRONMENT_VALUES.append(filt.strip())
+            return ""
+        else:
+            return filter_big_str(ENVIRONMENT_VALUES, filt)
+
+    except Exception as e:
+        print("An error occurred:", str(e))
+
+
 def exit_cmd():
     exit(0)
 
@@ -79,23 +126,29 @@ def main():
     run = True
     while run:
         prompt = pwd()
-        if prompt.lower().__contains__("ls"):
+        if prompt.lower().startswith("ls"):
             if prompt.lower() == "ls":
                 print(ls(r"*"))
             else:
-                # needs fixing
                 split_data = prompt.lower().split(" ")
                 os.chdir(split_data[1])
                 print(ls(r"*"))
                 os.chdir(original_dir)
         elif prompt.lower() == "exit":
             exit_cmd()
-        elif prompt.lower().__contains__("cd"):
+        elif prompt.lower().startswith("cd"):
             if prompt.lower() == "cd":
                 print(os.getcwd())
             else:
                 split_data = prompt.lower().split(" ")
                 cd(split_data[1])
+        elif prompt.lower().startswith("set"):
+            if prompt.lower() == "set":
+                print(set_cmd(""))
+            else:
+                split_data = prompt.lower().split(" ")
+                print(set_cmd(split_data[1]))
+                
 
 
         #if prompt.lower() in internal_dict:
