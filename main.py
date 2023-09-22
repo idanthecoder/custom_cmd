@@ -59,7 +59,10 @@ def cd(directory):
     if directory == "..":
         os.chdir(remove_suffix_until_char(os.getcwd(), "\\"))
     else:
-        os.chdir(directory)
+        try:
+            os.chdir(directory)
+        except OSError:
+            print("Invalid Path!")
 
 
 def filter_big_str(lst, filt):
@@ -146,7 +149,10 @@ def main():
                 print(os.getcwd())
             else:
                 split_data = prompt.lower().split(" ")
-                cd(split_data[1])
+                try:
+                    cd(split_data[1])
+                except IndexError:
+                    print("Invalid Command!")
         elif prompt.lower().startswith("set"):
             if prompt.lower() == "set":
                 print(set_cmd(""))
