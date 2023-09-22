@@ -2,6 +2,7 @@ import os
 import sys
 import glob
 import subprocess
+import platform
 
 PATH = [r"c:\temp", r"c:\windows\..."]
 
@@ -112,6 +113,13 @@ def set_cmd(filt):
     except Exception as e:
         print("An error occurred:", str(e))
 
+    
+def cls():
+    if platform.system().lower() == 'windows':
+        os.system('cls')
+    else:
+        os.system('clear')
+
 
 def exit_cmd():
     exit(0)
@@ -159,6 +167,9 @@ def main():
             else:
                 split_data = prompt.lower().split(" ")
                 print(set_cmd(split_data[1]))
+        elif prompt.lower().startswith("cls"):
+            cls()
+        
 
         # if prompt.lower() in internal_dict:
         #    if prompt.lower() == "ls":
