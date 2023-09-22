@@ -126,10 +126,11 @@ def main():
     run = True
     while run:
         prompt = pwd()
-        if prompt.lower().startswith("ls"):
+        if prompt.lower().__contains__("ls"):
             if prompt.lower() == "ls":
                 print(ls(r"*"))
             else:
+                # needs fixing
                 split_data = prompt.lower().split(" ")
                 os.chdir(split_data[1])
                 print(ls(r"*"))
