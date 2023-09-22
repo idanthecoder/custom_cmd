@@ -113,7 +113,7 @@ def set_cmd(filt):
     except Exception as e:
         print("An error occurred:", str(e))
 
-    
+
 def cls():
     if platform.system().lower() == 'windows':
         os.system('cls')
@@ -126,7 +126,15 @@ def exit_cmd():
 
 
 def help_cmd():
-    print()
+    print('''For more information on a specific command, type HELP command-name
+          
+          CD             Displays the name of or changes the current directory.
+          CLS            Clears the screen.
+          DIR            Displays a list of files and subdirectories in a directory.
+          EXIT           Quits the CMD.EXE program (command interpreter).
+          SET            Displays, sets, or removes Windows environment variables.
+          
+          ''')
 
 
 def pwd():
@@ -169,6 +177,12 @@ def main():
                 print(set_cmd(split_data[1]))
         elif prompt.lower().startswith("cls"):
             cls()
+        elif prompt.lower().startswith("help"):
+            if prompt.lower() == "help":
+                help_cmd()
+            else:
+                # support for spesific helps
+                pass
         
 
         # if prompt.lower() in internal_dict:
