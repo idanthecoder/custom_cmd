@@ -151,22 +151,41 @@ def pwd():
 
 def mkdir(path_and_name):
     path = None
-    if os.path.sep in path_and_name:
-        # A full path was provided
-        path, directory_name = path_and_name.rsplit(os.path.sep, 1)
+    # if os.path.sep in path_and_name:
+    #     # A full path was provided
+    #     path, directory_name = path_and_name.rsplit(' ', 1)
+    # else:
+    #     # Only a directory name was provided
+    #     directory_name = path_and_name
+    #     path = os.getcwd() 
+    
+    # # Check if the directory already exists
+    # full_path = os.path.join(path, directory_name)
+    # if not os.path.exists(full_path):
+    #     # Create the directory
+    #     os.mkdir(full_path)
+    #     print(f"Directory '{directory_name}' created successfully at '{path}'.")
+    # else:
+    #     print(f"Directory '{directory_name}' already exists at '{path}'.")
+    # Split the input into path and directory name at the last space
+    parts = path_and_name.rsplit(' ', 1)
+    
+    # If only one part is found, treat it as the directory name and use the default path
+    if len(parts) == 1:
+        directory_name = parts[0]
+        path = os.getcwd()  # Get the current working directory as the default
     else:
-        # Only a directory name was provided
-        directory_name = path_and_name
-        path = os.getcwd() 
+        path = parts[0]
+        directory_name = parts[1]
     
     # Check if the directory already exists
     full_path = os.path.join(path, directory_name)
     if not os.path.exists(full_path):
         # Create the directory
         os.mkdir(full_path)
-        print(f"Directory '{directory_name}' created successfully at '{path}'.")
+        print(f"Directory '{directory_name}' created successfully at '{full_path}'.")
     else:
-        print(f"Directory '{directory_name}' already exists at '{path}'.")
+        return (f"Directory '{directory_name}' already exists at '{full_path}'.")
 
 
 def main():
