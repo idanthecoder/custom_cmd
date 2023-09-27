@@ -10,6 +10,8 @@ import platform
 #                                    text=True).stdout.splitlines()
 
 def setup_enviroment_vars():
+    global ENVIRONMENT_VALUES
+    ENVIRONMENT_VALUES = []
     for key, value in  os.environ.items():
         ENVIRONMENT_VALUES.append(f"{key}={value}")
     ENVIRONMENT_VALUES.append("CMDNEO_VERSION=V7.10")
@@ -147,6 +149,25 @@ def help_cmd():
 def pwd():
     return input(f"{os.getcwd()}~> ")
 
+def mkdir(path_and_name):
+    path = None
+    if os.path.sep in path_and_name:
+        # A full path was provided
+        path, directory_name = path_and_name.rsplit(os.path.sep, 1)
+    else:
+        # Only a directory name was provided
+        directory_name = path_and_name
+        path = os.getcwd() 
+    
+    # Check if the directory already exists
+    full_path = os.path.join(path, directory_name)
+    if not os.path.exists(full_path):
+        # Create the directory
+        os.mkdir(full_path)
+        print(f"Directory '{directory_name}' created successfully at '{path}'.")
+    else:
+        print(f"Directory '{directory_name}' already exists at '{path}'.")
+
 
 def main():
     original_dir = os.getcwd()
@@ -190,6 +211,13 @@ def main():
             else:
                 # support for spesific helps
                 pass
+        elif prompt.lower().startswith("mkdir"):
+            if prompt.lower() == "mkdir":
+                pass
+            elif prompt.lower()[5] != " ":
+                print("Invalid Syntax!")
+            else:
+                mkdir(prompt[6:])
         elif prompt.lower() == "test":
             pass
         
@@ -206,10 +234,5 @@ def main():
 
 
 if __name__ == "__main__":
-    internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd}
-    # Access the environment variables
-    ENVIRONMENT_VALUES = []
-
-    setup_enviroment_vars()
-
+    internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir":mkdir}
     main()
