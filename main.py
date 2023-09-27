@@ -114,9 +114,10 @@ def set_cmd(filt):
         if filt == "":
             return "\n".join(ENVIRONMENT_VALUES)
         elif filt.__contains__("="):
-            ENVIRONMENT_VALUES.append(filt.strip())
+            #ENVIRONMENT_VALUES.append(filt.strip())
+            ENVIRONMENT_VALUES.append(filt)
             ENVIRONMENT_VALUES.sort(key=str.casefold)
-            return ""
+            return "Added variable to environment"
         else:
             return filter_lst(ENVIRONMENT_VALUES, filt)
 
@@ -221,8 +222,10 @@ def main():
             if prompt.lower() == "set":
                 print(set_cmd(""))
             else:
-                split_data = prompt.lower().split(" ")
-                print(set_cmd(split_data[1]))
+                #split_data = prompt.lower().split(" ")
+                #print(set_cmd(split_data[1]))
+                parameters = prompt.lower()[4:]
+                print(set_cmd(parameters))
         elif prompt.lower().startswith("cls"):
             cls()
         elif prompt.lower().startswith("help"):
