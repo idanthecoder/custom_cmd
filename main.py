@@ -108,6 +108,7 @@ def filter_lst(lst, filt):
 #        print("An error occurred:", str(e))
 
 def set_cmd(filt):
+    global ENVIRONMENT_VALUES
     try:
         # Print the output of the 'set' command
         if filt == "":
@@ -213,7 +214,7 @@ def main():
                 pass
         elif prompt.lower().startswith("mkdir"):
             if prompt.lower() == "mkdir":
-                pass
+                print("The syntax of the command is incorrect.")
             elif prompt.lower()[5] != " ":
                 print("Invalid Syntax!")
             else:
@@ -235,4 +236,5 @@ def main():
 
 if __name__ == "__main__":
     internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir":mkdir}
+    setup_enviroment_vars()
     main()
