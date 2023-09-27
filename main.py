@@ -4,10 +4,16 @@ import glob
 import subprocess
 import platform
 
-PATH = [r"c:\temp", r"c:\windows\..."]
+#PATH = [r"c:\temp", r"c:\windows\..."]
+#
+#ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+#                                    text=True).stdout.splitlines()
 
-ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-                                    text=True).stdout.splitlines()
+# Access the environment variables
+ENVIRONMENT_VALUES = []
+
+for key, value in  os.environ.items():
+    ENVIRONMENT_VALUES.append(f"{key}={value}")
 
 
 def print_credits():
@@ -183,6 +189,8 @@ def main():
             else:
                 # support for spesific helps
                 pass
+        elif prompt.lower() == "test":
+            pass
         
 
         # if prompt.lower() in internal_dict:
