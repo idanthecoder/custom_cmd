@@ -196,53 +196,59 @@ def main():
     run = True
     while run:
         prompt = pwd()
-        if prompt.lower().startswith("ls"):
+        prompt = prompt.lower().lstrip()
+        
+        # works with spaces
+        if prompt.startswith("ls"):
             try:
-                if prompt.lower() == "ls":
+                if prompt.rstrip() == "ls":
                     print(ls(r"*"))
                 else:
-                    split_data = prompt.lower().split(" ")
-                    os.chdir(split_data[1])
+                    parameters = prompt[3:]
+                    os.chdir(parameters.lstrip().rstrip())
                     print(ls(r"*"))
                     os.chdir(original_dir)
             except OSError:
                 print("Invalid Syntax!")
-        elif prompt.lower() == "exit":
+        # works with spaces
+        elif prompt.startswith("exit"):
             exit_cmd()
-        elif prompt.lower().startswith("cd"):
-            if prompt.lower() == "cd":
+        # works with spaces
+        elif prompt.startswith("cd"):
+            if prompt.rstrip() == "cd":
                 print(os.getcwd())
             else:
-                split_data = prompt.lower().split(" ")
+                parameters = prompt[3:].lstrip().rstrip()
                 try:
-                    cd(split_data[1])
+                    cd(parameters)
                 except IndexError:
                     print("Invalid Command!")
-        elif prompt.lower().startswith("set"):
-            if prompt.lower() == "set":
+        # works with spaces
+        elif prompt.startswith("set"):
+            if prompt.rstrip() == "set":
                 print(set_cmd(""))
             else:
                 #split_data = prompt.lower().split(" ")
                 #print(set_cmd(split_data[1]))
-                parameters = prompt.lower()[4:]
+                parameters = prompt[4:].lstrip().rstrip()
                 print(set_cmd(parameters))
-        elif prompt.lower().startswith("cls"):
+        # works with spaces
+        elif prompt.startswith("cls"):
             cls()
-        elif prompt.lower().startswith("help"):
-            if prompt.lower() == "help":
+        # works with spaces, but function is unfinished!
+        elif prompt.startswith("help"):
+            if prompt.rstrip() == "help":
                 help_cmd()
             else:
                 # support for spesific helps
                 pass
-        elif prompt.lower().startswith("mkdir"):
-            if prompt.lower() == "mkdir":
+        elif prompt.startswith("mkdir"):
+            if prompt == "mkdir":
                 print("The syntax of the command is incorrect.")
-            elif prompt.lower()[5] != " ":
+            elif prompt[5] != " ":
                 print("Invalid Syntax!")
             else:
                 mkdir(prompt[6:])
-        elif prompt.lower() == "test":
-            pass
         
 
         # if prompt.lower() in internal_dict:
