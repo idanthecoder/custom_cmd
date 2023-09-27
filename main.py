@@ -13,6 +13,7 @@ def setup_enviroment_vars():
     for key, value in  os.environ.items():
         ENVIRONMENT_VALUES.append(f"{key}={value}")
     ENVIRONMENT_VALUES.append("CMDNEO_VERSION=V7.10")
+    ENVIRONMENT_VALUES.sort(key=str.casefold)
 
 
 def print_credits():
@@ -71,7 +72,7 @@ def cd(directory):
             print("Invalid Path!")
 
 
-def filter_big_str(lst, filt):
+def filter_lst(lst, filt):
     temp_lst = []
 
     for i in range(0, len(lst)):
@@ -111,9 +112,10 @@ def set_cmd(filt):
             return "\n".join(ENVIRONMENT_VALUES)
         elif filt.__contains__("="):
             ENVIRONMENT_VALUES.append(filt.strip())
+            ENVIRONMENT_VALUES.sort(key=str.casefold)
             return ""
         else:
-            return filter_big_str(ENVIRONMENT_VALUES, filt)
+            return filter_lst(ENVIRONMENT_VALUES, filt)
 
     except Exception as e:
         print("An error occurred:", str(e))
