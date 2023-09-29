@@ -196,16 +196,16 @@ def main():
     run = True
     while run:
         prompt = pwd()
-        prompt = prompt.lower().lstrip()
+        prompt = prompt.lower().lstrip().rstrip()
         
         # works with spaces
         if prompt.startswith("ls"):
             try:
-                if prompt.rstrip() == "ls":
+                if prompt == "ls":
                     print(ls(r"*"))
                 else:
                     parameters = prompt[3:]
-                    os.chdir(parameters.lstrip().rstrip())
+                    os.chdir(parameters.lstrip())
                     print(ls(r"*"))
                     os.chdir(original_dir)
             except OSError:
@@ -215,29 +215,29 @@ def main():
             exit_cmd()
         # works with spaces
         elif prompt.startswith("cd"):
-            if prompt.rstrip() == "cd":
+            if prompt == "cd":
                 print(os.getcwd())
             else:
-                parameters = prompt[3:].lstrip().rstrip()
+                parameters = prompt[3:].lstrip()
                 try:
                     cd(parameters)
                 except IndexError:
                     print("Invalid Command!")
         # works with spaces
         elif prompt.startswith("set"):
-            if prompt.rstrip() == "set":
+            if prompt == "set":
                 print(set_cmd(""))
             else:
                 #split_data = prompt.lower().split(" ")
                 #print(set_cmd(split_data[1]))
-                parameters = prompt[4:].lstrip().rstrip()
+                parameters = prompt[4:].lstrip()
                 print(set_cmd(parameters))
         # works with spaces
         elif prompt.startswith("cls"):
             cls()
         # works with spaces, but function is unfinished!
         elif prompt.startswith("help"):
-            if prompt.rstrip() == "help":
+            if prompt == "help":
                 help_cmd()
             else:
                 # support for spesific helps
