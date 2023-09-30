@@ -210,12 +210,9 @@ def execute_python_file(script_name):
 
 def execute_external(command):
     try:
-        command_and_param = command.split()
-        if command_and_param[0] == command:
-            result = subprocess.run([command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        else:
-            command, param = command_and_param[0], command_and_param[1]
-            result = subprocess.run([command, param], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        # user input will be turned to list that will be run by the subprocess
+        command_and_params: list = command.split()
+        result = subprocess.run(command_and_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
         # Check if the command was successful (exit code 0)
         if result.returncode == 0:
