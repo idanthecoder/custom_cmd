@@ -4,11 +4,6 @@ import glob
 import subprocess
 import platform
 
-#PATH = [r"c:\temp", r"c:\windows\..."]
-#
-#ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-#                                    text=True).stdout.splitlines()
-
 def setup_enviroment_vars():
     global ENVIRONMENT_VALUES
     ENVIRONMENT_VALUES = []
@@ -81,31 +76,6 @@ def filter_lst(lst, filt):
         if lst[i].lower().startswith(filt):
             temp_lst.append(lst[i])
     return "\n".join(temp_lst)
-
-
-# def set_cmd(filt):
-#    command = 'set'
-#
-#    try:
-#        # Run the 'set' command and capture the output
-#        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-#
-#        # Check if the command was successful
-#        if result.returncode == 0:
-#            # Print the output of the 'set' command
-#            if filt == "":
-#                return result.stdout
-#            elif filt.__contains__("="):
-#                result.stdout.splitlines().append(filt.strip())
-#                return ""
-#            else:
-#                return filter_big_str(result.stdout.splitlines(), filt)
-#        else:
-#            # Print any error messages
-#            print("Error:", result.stderr)
-#
-#    except Exception as e:
-#        print("An error occurred:", str(e))
 
 def set_cmd(filt):
     global ENVIRONMENT_VALUES
@@ -180,6 +150,12 @@ def execute_python_file(script_name):
     except subprocess.CalledProcessError as e:
         print(f"Error running {script_name}: {e}")
 
+def execute_externals(script_name):
+    try:
+        # Run the Python script using subprocess
+        subprocess.run([sys.executable, script_name+".exe"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running {script_name}: {e}")
 
 
 def main():
@@ -196,6 +172,10 @@ def main():
                 if prompt.removesuffix(".py") == "":
                     continue
                 execute_python_file(prompt)
+            elif prompt.endswith(".exe"):
+                if prompt.removesuffix(".exe") == "":
+                    continue
+                execute_externals(prompt)
                 
             
         # works with spaces
@@ -250,18 +230,6 @@ def main():
             else:
                 parameters = prompt[6:].lstrip().rstrip()
                 mkdir(prompt[6:])
-        
-
-        # if prompt.lower() in internal_dict:
-        #    if prompt.lower() == "ls":
-        #        print(internal_dict[prompt.lower()]("*"))
-        #    else:
-        #        internal_dict[prompt.lower()]()
-        # if prompt.lower().__contains__(" "):
-        #    splitted = prompt.lower().split(" ")
-        #    if splitted[0] not in internal_dict:
-        #        continue
-
 
 if __name__ == "__main__":
     internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir": mkdir}
