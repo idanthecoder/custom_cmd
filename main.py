@@ -3,7 +3,10 @@ import sys
 import glob
 import subprocess
 import platform
-
+#PATH = [r"c:\temp", r"c:\windows\..."]
+#
+#ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+#                                    text=True).stdout.splitlines()
 def setup_enviroment_vars():
     global ENVIRONMENT_VALUES
     ENVIRONMENT_VALUES = []
