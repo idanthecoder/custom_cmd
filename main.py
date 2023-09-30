@@ -181,6 +181,13 @@ def execute_python_file(script_name):
         print(f"Error running {script_name}: {e}")
 
 
+def execute_external(command):
+    try:
+        # Run the Python script using subprocess
+        subprocess.run([sys.executable, f"{command}.exe"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running {command}: {e}")
+
 
 def main():
     original_dir = os.getcwd()
@@ -190,13 +197,10 @@ def main():
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
         
-        if prompt not in internal_dict.keys():
-            
-            if prompt.endswith(".py"):
-                if prompt.removesuffix(".py") == "":
-                    continue
-                execute_python_file(prompt)
-                
+        if prompt.endswith(".py"):
+            if prompt.removesuffix(".py") == "":
+                continue
+            execute_python_file(prompt)                
             
         # works with spaces
         elif prompt.startswith("ls"):
@@ -251,6 +255,8 @@ def main():
                 parameters = prompt[6:].lstrip().rstrip()
                 mkdir(prompt[6:])
         
+        else:
+            execute_external(prompt)
 
         # if prompt.lower() in internal_dict:
         #    if prompt.lower() == "ls":
