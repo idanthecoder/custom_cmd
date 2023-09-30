@@ -153,23 +153,6 @@ def pwd():
 
 def mkdir(path_and_name):
     path = None
-    # if os.path.sep in path_and_name:
-    #     # A full path was provided
-    #     path, directory_name = path_and_name.rsplit(' ', 1)
-    # else:
-    #     # Only a directory name was provided
-    #     directory_name = path_and_name
-    #     path = os.getcwd() 
-    
-    # # Check if the directory already exists
-    # full_path = os.path.join(path, directory_name)
-    # if not os.path.exists(full_path):
-    #     # Create the directory
-    #     os.mkdir(full_path)
-    #     print(f"Directory '{directory_name}' created successfully at '{path}'.")
-    # else:
-    #     print(f"Directory '{directory_name}' already exists at '{path}'.")
-    # Split the input into path and directory name at the last space
     parts = path_and_name.rsplit(' ', 1)
     
     # If only one part is found, treat it as the directory name and use the default path
@@ -190,6 +173,15 @@ def mkdir(path_and_name):
         return (f"Directory '{directory_name}' already exists at '{full_path}'.")
 
 
+def execute_python_file(script_name):
+    try:
+        # Run the Python script using subprocess
+        subprocess.run(['python', script_name], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error running {script_name}: {e}")
+
+
+
 def main():
     original_dir = os.getcwd()
     print_credits()
@@ -198,8 +190,16 @@ def main():
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
         
+        if prompt not in internal_dict.keys():
+            
+            if prompt.endswith(".py"):
+                if prompt.removesuffix(".py") == "":
+                    continue
+                execute_python_file(prompt)
+                
+            
         # works with spaces
-        if prompt.startswith("ls"):
+        elif prompt.startswith("ls"):
             try:
                 if prompt == "ls":
                     print(ls(r"*"))
@@ -248,6 +248,7 @@ def main():
             elif prompt[5] != " ":
                 print("Invalid Syntax!")
             else:
+                parameters = prompt[6:].lstrip().rstrip()
                 mkdir(prompt[6:])
         
 
@@ -263,6 +264,6 @@ def main():
 
 
 if __name__ == "__main__":
-    internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir":mkdir}
+    internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir": mkdir}
     setup_enviroment_vars()
     main()
