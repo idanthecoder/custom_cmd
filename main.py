@@ -3,14 +3,17 @@ import sys
 import glob
 import subprocess
 import platform
-#PATH = [r"c:\temp", r"c:\windows\..."]
+
+
+# PATH = [r"c:\temp", r"c:\windows\..."]
 #
-#ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
+# ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
 #                                    text=True).stdout.splitlines()
+
 def setup_enviroment_vars():
     global ENVIRONMENT_VALUES
     ENVIRONMENT_VALUES = []
-    for key, value in  os.environ.items():
+    for key, value in os.environ.items():
         ENVIRONMENT_VALUES.append(f"{key}={value}")
     ENVIRONMENT_VALUES.append("CMDNEO_VERSION=V7.10")
     ENVIRONMENT_VALUES.sort(key=str.casefold)
@@ -80,6 +83,31 @@ def filter_lst(lst, filt):
             temp_lst.append(lst[i])
     return "\n".join(temp_lst)
 
+
+# def set_cmd(filt):
+#    command = 'set'
+#
+#    try:
+#        # Run the 'set' command and capture the output
+#        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+#
+#        # Check if the command was successful
+#        if result.returncode == 0:
+#            # Print the output of the 'set' command
+#            if filt == "":
+#                return result.stdout
+#            elif filt.__contains__("="):
+#                result.stdout.splitlines().append(filt.strip())
+#                return ""
+#            else:
+#                return filter_big_str(result.stdout.splitlines(), filt)
+#        else:
+#            # Print any error messages
+#            print("Error:", result.stderr)
+#
+#    except Exception as e:
+#        print("An error occurred:", str(e))
+
 def set_cmd(filt):
     global ENVIRONMENT_VALUES
     try:
@@ -87,7 +115,7 @@ def set_cmd(filt):
         if filt == "":
             return "\n".join(ENVIRONMENT_VALUES)
         elif filt.__contains__("="):
-            #ENVIRONMENT_VALUES.append(filt.strip())
+            # ENVIRONMENT_VALUES.append(filt.strip())
             ENVIRONMENT_VALUES.append(filt)
             ENVIRONMENT_VALUES.sort(key=str.casefold)
             return "Added variable to environment"
@@ -111,23 +139,24 @@ def exit_cmd():
 
 def help_cmd():
     print('''For more information on a specific command, type HELP command-name
-          
+
           CD             Displays the name of or changes the current directory.
           CLS            Clears the screen.
           DIR            Displays a list of files and subdirectories in a directory.
           EXIT           Quits the CMD.EXE program (command interpreter).
           SET            Displays, sets, or removes Windows environment variables.
-          
+
           ''')
 
 
 def pwd():
     return input(f"{os.getcwd()}~> ")
 
+
 def mkdir(path_and_name):
     path = None
     parts = path_and_name.rsplit(' ', 1)
-    
+
     # If only one part is found, treat it as the directory name and use the default path
     if len(parts) == 1:
         directory_name = parts[0]
@@ -135,7 +164,7 @@ def mkdir(path_and_name):
     else:
         path = parts[0]
         directory_name = parts[1]
-    
+
     # Check if the directory already exists
     full_path = os.path.join(path, directory_name)
     if not os.path.exists(full_path):
@@ -153,12 +182,13 @@ def execute_python_file(script_name):
     except subprocess.CalledProcessError as e:
         print(f"Error running {script_name}: {e}")
 
-def execute_externals(script_name):
+
+def execute_external(command):
     try:
         # Run the Python script using subprocess
-        subprocess.run([sys.executable, script_name+".exe"], check=True)
+        subprocess.run([sys.executable, f"{command}.exe"], check=True)
     except subprocess.CalledProcessError as e:
-        print(f"Error running {script_name}: {e}")
+        print(f"Error running {command}: {e}")
 
 
 def main():
@@ -168,20 +198,13 @@ def main():
     while run:
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
-        
-        if prompt not in internal_dict.keys():
-            
-            if prompt.endswith(".py"):
-                if prompt.removesuffix(".py") == "":
-                    continue
-                execute_python_file(prompt)
-            elif prompt.endswith(".exe"):
-                if prompt.removesuffix(".exe") == "":
-                    continue
-                execute_externals(prompt)
-                
-            
-        # works with spaces
+
+        if prompt.endswith(".py"):
+            if prompt.removesuffix(".py") == "":
+                continue
+            execute_python_file(prompt)
+
+            # works with spaces
         elif prompt.startswith("ls"):
             try:
                 if prompt == "ls":
@@ -211,8 +234,8 @@ def main():
             if prompt == "set":
                 print(set_cmd(""))
             else:
-                #split_data = prompt.lower().split(" ")
-                #print(set_cmd(split_data[1]))
+                # split_data = prompt.lower().split(" ")
+                # print(set_cmd(split_data[1]))
                 parameters = prompt[4:].lstrip()
                 print(set_cmd(parameters))
         # works with spaces
@@ -233,6 +256,20 @@ def main():
             else:
                 parameters = prompt[6:].lstrip().rstrip()
                 mkdir(prompt[6:])
+
+        else:
+            execute_external(prompt)
+
+        # if prompt.lower() in internal_dict:
+        #    if prompt.lower() == "ls":
+        #        print(internal_dict[prompt.lower()]("*"))
+        #    else:
+        #        internal_dict[prompt.lower()]()
+        # if prompt.lower().__contains__(" "):
+        #    splitted = prompt.lower().split(" ")
+        #    if splitted[0] not in internal_dict:
+        #        continue
+
 
 if __name__ == "__main__":
     internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir": mkdir}
