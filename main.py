@@ -258,7 +258,9 @@ def main():
                 mkdir(prompt[6:])
 
         else:
+            os.chdir("C:\Windows\System32")
             execute_external(prompt)
+            os.chdir(original_dir)
 
         # if prompt.lower() in internal_dict:
         #    if prompt.lower() == "ls":
