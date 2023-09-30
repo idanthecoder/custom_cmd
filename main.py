@@ -3,6 +3,8 @@ import sys
 import glob
 import subprocess
 import platform
+import argparse
+import re
 
 #PATH = [r"c:\temp", r"c:\windows\..."]
 #
@@ -174,6 +176,30 @@ def mkdir(path_and_name):
         return (f"Directory '{directory_name}' already exists at '{full_path}'.")
 
 
+def clean_filename(filename):
+    # Remove special characters from the filename
+    cleaned_name = re.sub(r'', '', filename)
+    return cleaned_name
+
+
+def rename_files():
+    old_names = input("Enter old file paths (comma-separated): ").split(",")
+    new_names = input("Enter new file paths (comma-separated): ").split(",")
+
+    if len(old_names) != len(new_names):
+        print("Error: Number of old paths must match the number of new paths.")
+    else:
+        for old_path, new_path in zip(old_names, new_names):
+            old_path = clean_filename(old_path.strip())
+            new_path = clean_filename(new_path.strip())
+
+            try:
+                os.rename(old_path, new_path)
+                print(f"Renamed '{old_path}' to '{new_path}' successfully.")
+            except OSError as e:
+                print(f"Error renaming '{old_path}': {e}")
+
+
 def execute_python_file(script_name):
     try:
         # Run the Python script using subprocess
@@ -184,10 +210,22 @@ def execute_python_file(script_name):
 
 def execute_external(command):
     try:
-        # Run the Python script using subprocess
-        subprocess.run([sys.executable, f"{command}.exe"], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error running {command}: {e}")
+        command_and_param = command.split()
+        if command_and_param[0] == command:
+            result = subprocess.run([command], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        else:
+            command, param = command_and_param[0], command_and_param[1]
+            result = subprocess.run([command, param], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        
+        # Check if the command was successful (exit code 0)
+        if result.returncode == 0:
+            print("Command output:")
+            print(result.stdout)
+        else:
+            print("Command failed:")
+            print(result.stderr)
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 
 def main():
@@ -257,7 +295,7 @@ def main():
                 mkdir(prompt[6:])
         
         else:
-            #execute_external(prompt)
+            execute_external(prompt)
             pass
 
         # if prompt.lower() in internal_dict:
