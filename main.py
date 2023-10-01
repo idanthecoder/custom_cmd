@@ -143,9 +143,12 @@ def help_cmd():
           
           CD             Displays the name of or changes the current directory.
           CLS            Clears the screen.
-          DIR            Displays a list of files and subdirectories in a directory.
           EXIT           Quits the CMD.EXE program (command interpreter).
-          SET            Displays, sets, or removes Windows environment variables.
+          HELP           Provides Help information for Windows/ Shell NEO commands.
+          LS             Displays a list of files and subdirectories in a directory.
+          MKDIR          Creates a directory.
+          RENAME         Renames a file or files.
+          SET            Displays, sets, or removes Windows/ Shell NEO environment variables.
           
           ''')
 
