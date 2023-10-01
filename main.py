@@ -85,30 +85,6 @@ def filter_lst(lst, filt):
     return "\n".join(temp_lst)
 
 
-# def set_cmd(filt):
-#    command = 'set'
-#
-#    try:
-#        # Run the 'set' command and capture the output
-#        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-#
-#        # Check if the command was successful
-#        if result.returncode == 0:
-#            # Print the output of the 'set' command
-#            if filt == "":
-#                return result.stdout
-#            elif filt.__contains__("="):
-#                result.stdout.splitlines().append(filt.strip())
-#                return ""
-#            else:
-#                return filter_big_str(result.stdout.splitlines(), filt)
-#        else:
-#            # Print any error messages
-#            print("Error:", result.stderr)
-#
-#    except Exception as e:
-#        print("An error occurred:", str(e))
-
 def set_cmd(filt):
     global ENVIRONMENT_VALUES
     try:
@@ -159,24 +135,30 @@ def pwd():
 
 def mkdir(path_and_name):
     path = None
-    parts = path_and_name.rsplit(' ', 1)
-    
-    # If only one part is found, treat it as the directory name and use the default path
-    if len(parts) == 1:
-        directory_name = parts[0]
-        path = os.getcwd()  # Get the current working directory as the default
-    else:
-        path = parts[0]
-        directory_name = parts[1]
-    
-    # Check if the directory already exists
-    full_path = os.path.join(path, directory_name)
-    if not os.path.exists(full_path):
-        # Create the directory
-        os.mkdir(full_path)
-        print(f"Directory '{directory_name}' created successfully at '{full_path}'.")
-    else:
-        return (f"Directory '{directory_name}' already exists at '{full_path}'.")
+    parts = path_and_name.split()
+
+    for part in parts:
+        # If only one part is found, treat it as the directory name and use the default path
+        if not '\\' in part:
+            directory_name = part
+            path = os.getcwd()  # Get the current working directory as the default
+            # Check if the directory already exists
+            full_path = os.path.join(path, directory_name)
+        else:
+            path = part
+            full_path = part
+            directory_name = part.rsplit("\\", 1)[1]
+
+        try:
+            if not os.path.exists(full_path):
+                # Create the directory
+                os.mkdir(full_path)
+                print(f"Directory '{directory_name}' created successfully at '{full_path}'.")
+            else:
+                print(f"Directory '{directory_name}' already exists at '{full_path}'.")
+        except OSError:
+            print("Directory path wasn't found!")
+            pass
 
 
 def clean_filename(filename):
