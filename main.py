@@ -225,6 +225,33 @@ def execute_external(command):
         print(f"An error occurred: {e}")
 
 
+def redirect_output_to_file(command, output_filename):
+    try:
+        with open(output_filename, "w") as output_file:
+            subprocess.run(command, shell=True, stdout=output_file)
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+def redirect_input_from_file(command, input_filename):
+    try:
+        with open(input_filename, "r") as input_file:
+            subprocess.run(command, shell=True, stdin=input_file)
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+def pipe_commands(command1, command2):
+    try:
+        process1 = subprocess.Popen(command1, stdout=subprocess.PIPE, shell=True)
+        process2 = subprocess.Popen(command2, stdin=process1.stdout, stdout=subprocess.PIPE, shell=True)
+        process1.stdout.close()  # Close the output of the first command to prevent deadlocks
+        output = process2.communicate()[0]
+        return output.decode("utf-8")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
 def main():
     original_dir = os.getcwd()
     print_credits()
@@ -233,7 +260,23 @@ def main():
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
         
-        if prompt.endswith(".py"):
+        if prompt.__contains__(">"):
+            params = prompt.split(">")
+            file1 = params[0].lstrip().rstrip()
+            file2 = params[1].lstrip().rstrip()
+            redirect_output_to_file(file1, file2)
+        elif prompt.__contains__("<"):
+            params = prompt.split("<")
+            file1 = params[0].lstrip().rstrip()
+            file2 = params[1].lstrip().rstrip()
+            redirect_input_from_file(file1, file2)
+        elif prompt.__contains__("|"):
+            params = prompt.split("|")
+            file1 = params[0].lstrip().rstrip()
+            file2 = params[1].lstrip().rstrip()
+            print(pipe_commands(file1, file2))
+        
+        elif prompt.endswith(".py"):
             if prompt.removesuffix(".py") == "":
                 continue
             execute_python_file(prompt)                
