@@ -114,19 +114,324 @@ def exit_cmd():
     exit(0)
 
 
-def help_cmd():
-    print('''For more information on a specific command, type HELP command-name
-          
-          CD             Displays the name of or changes the current directory.
-          CLS            Clears the screen.
-          EXIT           Quits the CMD.EXE program (command interpreter).
-          HELP           Provides Help information for Windows/ Shell NEO commands.
-          LS             Displays a list of files and subdirectories in a directory.
-          MKDIR          Creates a directory.
-          RENAME         Renames a file or files.
-          SET            Displays, sets, or removes Windows/ Shell NEO environment variables.
-          
-          ''')
+def help_cmd(help):
+    if help == "help1":
+        print(r'''For more information on a specific command, type HELP command-name
+        
+            CD             Displays the name of or changes the current directory.
+            CLS            Clears the screen.
+            EXIT           Quits the CMD.EXE program (command interpreter).
+            HELP           Provides Help information for Windows/ Shell NEO commands.
+            DIR             Displays a list of files and subdirectories in a directory.
+            MKDIR          Creates a directory.
+            RENAME         Renames a file or files.
+            SET            Displays, sets, or removes Windows/ Shell NEO environment variables.
+
+        ''')
+    elif help == "cd":
+        print(r'''Displays the name of or changes the current directory.
+
+    CHDIR [/D] [drive:][path]
+    CHDIR [..]
+    CD [/D] [drive:][path]
+    CD [..]
+    
+    ..   Specifies that you want to change to the parent directory.
+
+    Type CD drive: to display the current directory in the specified drive.
+    Type CD without parameters to display the current drive and directory.
+
+    Use the /D switch to change current drive in addition to changing current
+    directory for a drive.
+
+    If Command Extensions are enabled CHDIR changes as follows:
+
+    The current directory string is converted to use the same case as
+    the on disk names.  So CD C:\TEMP would actually set the current
+    directory to C:\Temp if that is the case on disk.
+
+    CHDIR command does not treat spaces as delimiters, so it is possible to
+    CD into a subdirectory name that contains a space without surrounding
+    the name with quotes.  For example:
+
+    cd \winnt\profiles\\username\programs\start menu
+
+    is the same as:
+
+    cd "\winnt\profiles\\username\programs\start menu"
+
+    which is what you would have to type if extensions were disabled.
+    ''')
+
+    elif help == "cls":
+        print("Clears the screen.")
+    elif help == "exit":
+        print(r'''Quits the CMD.EXE program (command interpreter) or the current batch script.
+
+                EXIT [/B] [exitCode]
+
+                /B          specifies to exit the current batch script instead of
+                            CMD.EXE.  If executed from outside a batch script, 
+                            it will quit CMD.EXE
+
+                exitCode    specifies a numeric number.  if /B is specified, sets
+                            ERRORLEVEL that number.  If quitting CMD.EXE, sets the process
+                             exit code with that number.''')
+    elif help == "help":
+        print(r'''Provides help information for Windows commands.
+
+                HELP [command]
+
+                command - displays help information on that command.''')
+    elif help == "dir":
+        print(r'''Displays a list of files and subdirectories in a directory.
+
+                DIR [drive:][path][filename] [/A[[:]attributes]] [/B] [/C] [/D] [/L] [/N]
+                [/O[[:]sortorder]] [/P] [/Q] [/R] [/S] [/T[[:]timefield]] [/W] [/X] [/4]
+
+                [drive:][path][filename]
+                specifies drive, directory, and/or files to list.
+
+                /A          Displays files with specified attributes.
+                attributes   D  Directories                R  Read-only files
+                             H  Hidden files               A  Files ready for archiving
+                             S  System files               I  Not content indexed files
+                             L  Reparse Points             O  Offline files
+                             -  Prefix meaning not
+                /B          Uses bare format (no heading information or summary).
+                /C          Display the thousand separator in file sizes.  This is the
+                            default.  Use /-C to disable display of separator.
+                /D          Same as wide but files are list sorted by column.
+                /L          Uses lowercase.
+                /N          New long list format where filenames are on the far right.
+                /O          List by files in sorted order.
+                            sortorder    N  By name (alphabetic)       S  By size (smallest first)
+                                         E  By extension (alphabetic)  D  By date/time (oldest first)
+                                         G  Group directories first    -  Prefix to reverse order
+                /P          Pauses after each screenful of information.
+                /Q          Display the owner of the file.
+                /R          Display alternate data streams of the file.
+                /S          Displays files in specified directory and all subdirectories.
+                /T          Controls which time field displayed or used for sorting
+                            timefield   C  Creation
+                            A  Last Access
+                            W  Last Written
+                /W          Uses wide list format.
+                /X          This displays the short names generated for non-8dot3 file
+                            names.  The format is that of /N with the short name inserted
+                            before the long name. If no short name is present, blanks are
+                            displayed in its place.
+                /4          Displays four-digit years
+
+                Switches may be preset in the DIRCMD environment variable.  Override
+                preset switches by prefixing any switch with - (hyphen)--for example, /-W.''')
+    elif help == "mkdir":
+        print(r'''Creates a directory.
+
+                MKDIR [drive:]path
+                MD [drive:]path
+
+                If Command Extensions are enabled MKDIR changes as follows:
+
+                MKDIR creates any intermediate directories in the path, if needed.
+                For example, assume \a does not exist then:
+
+                mkdir \a\b\c\d
+
+                is the same as:
+
+                mkdir \a
+                chdir \a
+                mkdir b
+                chdir b
+                mkdir c
+                chdir c
+                mkdir d
+
+                which is what you would have to type if extensions were disabled.''')
+    elif help == "rename":
+        print(r'''Renames a file or files.
+
+                RENAME [drive:][path]filename1 filename2.
+                REN [drive:][path]filename1 filename2.
+
+                Note that you cannot specify a new drive or path for your destination file.''')
+    elif help == "set":
+        print(r'''Displays, sets, or removes cmd.exe environment variables.
+
+SET [variable=[string]]
+
+  variable  Specifies the environment-variable name.
+  string    Specifies a series of characters to assign to the variable.
+
+Type SET without parameters to display the current environment variables.
+
+If Command Extensions are enabled SET changes as follows:
+
+SET command invoked with just a variable name, no equal sign or value
+will display the value of all variables whose prefix matches the name
+given to the SET command.  For example:
+
+    SET P
+
+would display all variables that begin with the letter 'P'
+
+SET command will set the ERRORLEVEL to 1 if the variable name is not
+found in the current environment.
+
+SET command will not allow an equal sign to be part of the name of
+a variable.
+
+Two new switches have been added to the SET command:
+
+    SET /A expression
+    SET /P variable=[promptString]
+
+The /A switch specifies that the string to the right of the equal sign
+is a numerical expression that is evaluated.  The expression evaluator
+is pretty simple and supports the following operations, in decreasing
+order of precedence:
+
+    ()                  - grouping
+    ! ~ -               - unary operators
+    * / %               - arithmetic operators
+    + -                 - arithmetic operators
+    << >>               - logical shift
+    &                   - bitwise and
+    ^                   - bitwise exclusive or
+    |                   - bitwise or
+    = *= /= %= += -=    - assignment
+      &= ^= |= <<= >>=
+    ,                   - expression separator
+
+If you use any of the logical or modulus operators, you will need to
+enclose the expression string in quotes.  Any non-numeric strings in the
+expression are treated as environment variable names whose values are
+converted to numbers before using them.  If an environment variable name
+is specified but is not defined in the current environment, then a value
+of zero is used.  This allows you to do arithmetic with environment
+variable values without having to type all those % signs to get their
+values.  If SET /A is executed from the command line outside of a
+command script, then it displays the final value of the expression.  The
+assignment operator requires an environment variable name to the left of
+the assignment operator.  Numeric values are decimal numbers, unless
+prefixed by 0x for hexadecimal numbers, and 0 for octal numbers.
+So 0x12 is the same as 18 is the same as 022. Please note that the octal
+notation can be confusing: 08 and 09 are not valid numbers because 8 and
+9 are not valid octal digits.
+
+The /P switch allows you to set the value of a variable to a line of input
+entered by the user.  Displays the specified promptString before reading
+the line of input.  The promptString can be empty.
+
+Environment variable substitution has been enhanced as follows:
+
+    %PATH:str1=str2%
+
+would expand the PATH environment variable, substituting each occurrence
+of "str1" in the expanded result with "str2".  "str2" can be the empty
+string to effectively delete all occurrences of "str1" from the expanded
+output.  "str1" can begin with an asterisk, in which case it will match
+everything from the beginning of the expanded output to the first
+occurrence of the remaining portion of str1.
+
+May also specify substrings for an expansion.
+
+    %PATH:~10,5%
+
+would expand the PATH environment variable, and then use only the 5
+characters that begin at the 11th (offset 10) character of the expanded
+result.  If the length is not specified, then it defaults to the
+remainder of the variable value.  If either number (offset or length) is
+negative, then the number used is the length of the environment variable
+value added to the offset or length specified.
+
+    %PATH:~-10%
+
+would extract the last 10 characters of the PATH variable.
+
+    %PATH:~0,-2%
+
+would extract all but the last 2 characters of the PATH variable.
+
+Finally, support for delayed environment variable expansion has been
+added.  This support is always disabled by default, but may be
+enabled/disabled via the /V command line switch to CMD.EXE.  See CMD /?
+
+Delayed environment variable expansion is useful for getting around
+the limitations of the current expansion which happens when a line
+of text is read, not when it is executed.  The following example
+demonstrates the problem with immediate variable expansion:
+
+    set VAR=before
+    if "%VAR%" == "before" (
+        set VAR=after
+        if "%VAR%" == "after" @echo If you see this, it worked
+    )
+
+would never display the message, since the %VAR% in BOTH IF statements
+is substituted when the first IF statement is read, since it logically
+includes the body of the IF, which is a compound statement.  So the
+IF inside the compound statement is really comparing "before" with
+"after" which will never be equal.  Similarly, the following example
+will not work as expected:
+
+    set LIST=
+    for %i in (*) do set LIST=%LIST% %i
+    echo %LIST%
+
+in that it will NOT build up a list of files in the current directory,
+but instead will just set the LIST variable to the last file found.
+Again, this is because the %LIST% is expanded just once when the
+FOR statement is read, and at that time the LIST variable is empty.
+So the actual FOR loop we are executing is:
+
+    for %i in (*) do set LIST= %i
+
+which just keeps setting LIST to the last file found.
+
+Delayed environment variable expansion allows you to use a different
+character (the exclamation mark) to expand environment variables at
+execution time.  If delayed variable expansion is enabled, the above
+examples could be written as follows to work as intended:
+
+    set VAR=before
+    if "%VAR%" == "before" (
+        set VAR=after
+        if "!VAR!" == "after" @echo If you see this, it worked
+    )
+
+    set LIST=
+    for %i in (*) do set LIST=!LIST! %i
+    echo %LIST%
+
+If Command Extensions are enabled, then there are several dynamic
+environment variables that can be expanded but which don't show up in
+the list of variables displayed by SET.  These variable values are
+computed dynamically each time the value of the variable is expanded.
+If the user explicitly defines a variable with one of these names, then
+that definition will override the dynamic one described below:
+
+%CD% - expands to the current directory string.
+
+%DATE% - expands to current date using same format as DATE command.
+
+%TIME% - expands to current time using same format as TIME command.
+
+%RANDOM% - expands to a random decimal number between 0 and 32767.
+
+%ERRORLEVEL% - expands to the current ERRORLEVEL value
+
+%CMDEXTVERSION% - expands to the current Command Processor Extensions
+    version number.
+
+%CMDCMDLINE% - expands to the original command line that invoked the
+    Command Processor.
+
+%HIGHESTNUMANODENUMBER% - expands to the highest NUMA node number
+    on this machine.''')
+    else:
+        print("commend not active")
 
 
 def pwd():
@@ -247,6 +552,36 @@ def pipe_commands(command1, command2):
         print(f"Error: {e}")
 
 
+def redirect_input_output(prompt):
+    # Command with both input and output redirection
+    parts = prompt.split("<")
+    command_and_input = parts[0].strip()
+    output_file = parts[1].split(">")[1].strip()
+    input_file = parts[1].split(">")[0].strip()
+
+    # Read input from the input file
+    try:
+        with open(input_file, "r") as input_file:
+            input_data = input_file.read()
+    except FileNotFoundError:
+        print(f"Input file '{input_file}' not found.")
+        
+
+    # Execute the command with input data and redirect output to the output file
+    with open(output_file, "w") as output_file:
+        process = subprocess.Popen(
+            command_and_input,
+            shell=True,
+            stdout=output_file,
+            stderr=subprocess.PIPE,
+            stdin=subprocess.PIPE,
+            text=True
+        )
+        process.communicate(input=input_data)
+
+    print("Command executed with input and output redirection.")
+
+
 def main():
     original_dir = os.getcwd()
     print_credits()
@@ -255,7 +590,9 @@ def main():
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
         
-        if prompt.__contains__(">"):
+        if prompt.__contains__(">") and prompt.__contains__("<"):
+            redirect_input_output(prompt)
+        elif prompt.__contains__(">"):
             params = prompt.split(">")
             file1 = params[0].lstrip().rstrip()
             file2 = params[1].lstrip().rstrip()
@@ -316,9 +653,10 @@ def main():
         # works with spaces, but function is unfinished!
         elif prompt.startswith("help"):
             if prompt == "help":
-                help_cmd()
+                help_cmd("help1")
             else:
-                # support for spesific helps
+                comment_to_help = prompt[5:]
+                help_cmd(comment_to_help)
                 pass
         elif prompt.startswith("mkdir"):
             if prompt == "mkdir":
