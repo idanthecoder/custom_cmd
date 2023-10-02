@@ -164,25 +164,35 @@ def mkdir(path_and_name):
 def clean_filename(filename):
     # Remove special characters from the filename
     cleaned_name = re.sub(r'', '', filename)
+    #cleaned_name = cleaned_name.replace(" ", "")
     return cleaned_name
 
 
-def rename_files():
-    old_names = input("Enter old file paths (comma-separated): ").split(",")
-    new_names = input("Enter new file paths (comma-separated): ").split(",")
-
-    if len(old_names) != len(new_names):
-        print("Error: Number of old paths must match the number of new paths.")
+def rename_files(input):
+    """old_names = input("Enter old file paths (comma-separated): ").split(",")
+    new_names = input("Enter new file paths (comma-separated): ").split(",")"""
+    inputs: list[str] = input.split(" ")
+    if inputs[0].lower().startswith("c:\\"):
+        original_file_path = inputs[0]
     else:
-        for old_path, new_path in zip(old_names, new_names):
-            old_path = clean_filename(old_path.strip())
-            new_path = clean_filename(new_path.strip())
+        original_file_path = f"{os.getcwd()}\{inputs[0]}"
+    
+    path = original_file_path.split("\\")
+    file_path = path[0]
+    for i in path[1:-1]:
+        file_path += "\\" + i
+    old_names = file_path + "\\" + path[-1]
+    new_names = file_path + "\\" + inputs[1]
 
-            try:
-                os.rename(old_path, new_path)
-                print(f"Renamed '{old_path}' to '{new_path}' successfully.")
-            except OSError as e:
-                print(f"Error renaming '{old_path}': {e}")
+
+    old_path = clean_filename(old_names.strip())
+    new_path = clean_filename(new_names.strip())
+
+    try:
+        os.rename(old_path, new_path)
+        print(f"Renamed '{old_path}' to '{new_path}' successfully.")
+    except OSError as e:
+        print(f"Error renaming '{old_path}': {e}")
 
 
 def execute_python_file(script_name):
@@ -318,6 +328,10 @@ def main():
             else:
                 parameters = prompt[6:].lstrip().rstrip()
                 mkdir(prompt[6:])
+        elif prompt.startswith("rename") or prompt.startswith("ren"):
+            if prompt.startswith("rename"):
+                inp = prompt[7:]
+                rename_files(inp)
         
         else:
             execute_external(prompt)
