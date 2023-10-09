@@ -1,22 +1,38 @@
 import os
-import sys
 import glob
 import subprocess
 import platform
-import argparse
 import re
 
 
 def setup_enviroment_vars():
+    """
+    Objective: declare a gloal variables that will store all of the environment variables.
+    Parameters: Nothing.
+    Returns: Nothing.
+    """
+    
     global ENVIRONMENT_VALUES
     ENVIRONMENT_VALUES = []
+    # get all Windows environment variables
     for key, value in  os.environ.items():
         ENVIRONMENT_VALUES.append(f"{key}={value}")
+    # our own environment variables
     ENVIRONMENT_VALUES.append("CMDNEO_VERSION=V7.10")
+    ENVIRONMENT_VALUES.append("CODE_NAME=TYRANUS")
+    ENVIRONMENT_VALUES.append("MEGA_NEO=TRUE")
+    ENVIRONMENT_VALUES.append("INGANEU=ORLOGIN1")
+    # sort 
     ENVIRONMENT_VALUES.sort(key=str.casefold)
 
 
 def print_credits():
+    """
+    Objective: print fancy credits.
+    Parameters: Nothing.
+    Returns: Nothing.
+    """
+    
     print(r'''  ____  _          _ _   _   _ _____ ___                                             
  / ___|| |__   ___| | | | \ | | ____/ _ \                                            
  \___ \| '_ \ / _ \ | | |  \| |  _|| | | |                                           
@@ -47,6 +63,12 @@ def print_credits():
 
 
 def dir(pattern):
+    """
+    Objective: return all files and sub-directories matching a pattern in cwd (if exists).
+    Parameters: pattern (str).
+    Returns: string of all files and sub-directories matching a pattern in cwd.
+    """
+    
     try:
         res = glob.glob(pattern)
     except TypeError:
@@ -54,17 +76,29 @@ def dir(pattern):
     return '\n'.join(res)
 
 
-def remove_suffix_until_char(word, char_flag):
+def remove_suffix_until_flag(word, flag):
+    """
+    Objective: remove all chars from the end of the string until the flag is met.
+    Parameters: word (str), flag (string).
+    Returns: string of all files and sub-directories matching a pattern in cwd.
+    """
+    
     new_word = []
-    last_slash_pos = word.rindex(char_flag)
+    last_slash_pos = word.rindex(flag)
     for i in range(0, last_slash_pos):
         new_word.append(word[i])
     return "".join(new_word)
 
 
 def cd(directory):
+    """
+    Objective: change cwd to the requested directory (if exists).
+    Parameters: directory (str).
+    Returns: Nothing.
+    """
+    
     if directory == "..":
-        os.chdir(remove_suffix_until_char(os.getcwd(), "\\"))
+        os.chdir(remove_suffix_until_flag(os.getcwd(), "\\"))
     else:
         try:
             os.chdir(directory)
@@ -73,6 +107,12 @@ def cd(directory):
 
 
 def filter_lst(lst, filt):
+    """
+    Objective: change cwd to the requested directory (if exists).
+    Parameters: lst (list), filt (string).
+    Returns: string with all environment variables seperated by new lines.
+    """
+    
     temp_lst = []
 
     for i in range(0, len(lst)):
@@ -82,13 +122,25 @@ def filter_lst(lst, filt):
 
 
 def set_cmd(filt):
+    """
+    OBJECTIVE: The set_cmd function manages environment variables by either
+        displaying all environment variables, adding new ones, or filtering them based on user input.
+
+    PARAMETERS: filt (str): A string parameter representing the user's command or request related to environment variables.
+                    It can be empty (for displaying all variables), contain an equal sign (for adding a new variable), 
+                    or serve as a filter string (for filtering variables).
+
+    RETURNS: If filt is empty: Returns a string containing all environment variables joined with line breaks ("\n").
+                If filt contains an equal sign: Returns a message indicating successful variable addition.
+                If filt is neither empty nor contains an equal sign: Returns a filtered list of environment variables as a string.
+    """
+    
     global ENVIRONMENT_VALUES
     try:
         # Print the output of the 'set' command
         if filt == "":
             return "\n".join(ENVIRONMENT_VALUES)
         elif filt.__contains__("="):
-            #ENVIRONMENT_VALUES.append(filt.strip())
             ENVIRONMENT_VALUES.append(filt)
             ENVIRONMENT_VALUES.sort(key=str.casefold)
             return "Added variable to environment"
@@ -100,6 +152,12 @@ def set_cmd(filt):
 
 
 def cls():
+    """
+    Objective: clears the entire terminal.
+    Parameters: Nothing.
+    Returns: Nothing.
+    """
+    
     if platform.system().lower() == 'windows':
         os.system('cls')
     else:
@@ -107,10 +165,22 @@ def cls():
 
 
 def exit_cmd():
+    """
+    Objective: terminate the program.
+    Parameters: Nothing.
+    Returns: Nothing.
+    """
+    
     exit(0)
 
 
 def help_cmd(help):
+    """
+    Objective: print help texts for supported internal command.
+    Parameters: help (str): specify specific helps.
+    Returns: Nothing.
+    """
+    
     if help == "help1":
         print(r'''For more information on a specific command, type HELP command-name
         
@@ -431,10 +501,28 @@ that definition will override the dynamic one described below:
 
 
 def pwd():
+    """
+    Objective: print cwd and collect data from user.
+    Parameters: Nothing.
+    Returns: Nothing.
+    """
+    
     return input(f"{os.getcwd()}~> ")
 
 
 def mkdir(path_and_name):
+    """  
+    OBJECTIVE: This function, 'mkdir', is designed to create a directory based on the provided 'path_and_name' argument
+    or check if the directory already exists. It aims to handle directory creation and validation.
+    
+    PARAMETERS:
+    - path_and_name (str): A string representing a directory path and name. It can be either a directory name or a full path.
+                            If it's a directory name, the function assumes the current working directory.
+                            If it's a full path, the function uses that path for directory operations.
+                            
+    RETURNS: Nothing.
+    """
+    
     path = None
     parts = path_and_name.split()
 
@@ -463,33 +551,54 @@ def mkdir(path_and_name):
 
 
 def clean_filename(filename):
-    # Remove special characters from the filename
+    """
+    Objective: remove special characters from the filename
+    Parameters: filename (str).
+    Returns: pure filename.
+    """
+    
     cleaned_name = re.sub(r'', '', filename)
-    #cleaned_name = cleaned_name.replace(" ", "")
     return cleaned_name
 
 
 def rename_files(input):
-    """old_names = input("Enter old file paths (comma-separated): ").split(",")
-    new_names = input("Enter new file paths (comma-separated): ").split(",")"""
-    inputs: list[str] = input.split(" ")
+    """
+        OBJECTIVE: This function gets a file path and name and new name and rename the file.
+
+        PARAMETERS:
+            command (str): The shell command to execute.
+            input_filename (str): The path of the file, the name of the current file, the name that the user wants to change to.
+
+        RETURNS: nothing.
+    """
+    
+        # Split the input string into a list of strings
+    inputs = input.split(" ")
+
+    # Check if the first input is an absolute path (starts with 'c:\')
     if inputs[0].lower().startswith("c:\\"):
         original_file_path = inputs[0]
     else:
+        # If not an absolute path, assume it's a file in the current working directory
         original_file_path = f"{os.getcwd()}\{inputs[0]}"
-    
+
+    # Split the original file path into parts using backslashes
     path = original_file_path.split("\\")
     file_path = path[0]
+
+    # Reconstruct the file path up to the parent directory (excluding the file name)
     for i in path[1:-1]:
         file_path += "\\" + i
+
+    # Create the full path for the old and new file names
     old_names = file_path + "\\" + path[-1]
     new_names = file_path + "\\" + inputs[1]
-
 
     old_path = clean_filename(old_names.strip())
     new_path = clean_filename(new_names.strip())
 
     try:
+        # Attempt to rename the old file to the new file name
         os.rename(old_path, new_path)
         print(f"Renamed '{old_path}' to '{new_path}' successfully.")
     except OSError as e:
@@ -497,6 +606,15 @@ def rename_files(input):
 
 
 def execute_python_file(script_name):
+    """ 
+        OBJECTIVE: This function executes a Python script specified by 'script_name' using the 'python' command.
+
+        PARAMETERS:
+        - script_name (str): The name of the Python script file to be executed.
+
+        RETURNS: nothing.
+    """
+    
     try:
         # Run the Python script using subprocess
         subprocess.run(['python', script_name], check=True)
@@ -505,6 +623,15 @@ def execute_python_file(script_name):
 
 
 def execute_external(command):
+    """ 
+        OBJECTIVE: This function executes an external shell command specified in 'command' and captures its output and error messages.
+
+        PARAMETERS:
+	        - command (str): The shell command to execute along with its parameters, provided as a single string.
+
+        RETURNS: nothing. 
+     """
+     
     try:
         # user input will be turned to list that will be run by the subprocess
         command_and_params: list = command.split()
@@ -522,6 +649,16 @@ def execute_external(command):
 
 
 def redirect_output_to_file(command, output_filename):
+    """ 
+    OBJECTIVE: This function redirects output from specified shell command to a file.
+
+    PARAMETERS:
+        - command (str): The shell command to execute.
+        - output_filename (str): The name of the output file from which output will be redirected to from the command.
+
+    RETURNS: nothing.
+    """
+    
     try:
         with open(output_filename, "w") as output_file:
             subprocess.run(command, shell=True, stdout=output_file)
@@ -530,6 +667,16 @@ def redirect_output_to_file(command, output_filename):
 
 
 def redirect_input_from_file(command, input_filename):
+    """ 
+        OBJECTIVE: This function redirects input from a file to a specified shell command.
+
+        PARAMETERS:
+            - command (str): The shell command to execute.
+            - input_filename (str): The name of the input file from which input will be redirected to the command.
+
+        RETURNS: nothing.
+    """
+    
     try:
         with open(input_filename, "r") as input_file:
             subprocess.run(command, shell=True, stdin=input_file)
@@ -538,6 +685,15 @@ def redirect_input_from_file(command, input_filename):
 
 
 def pipe_commands(command1, command2):
+    """
+        OBJECTIVE: This function pipes the output of 'command1' into 'command2' and returns the result as a decoded string.
+
+        PARAMETERS:
+            - command1 (str): The first shell command to execute.
+            - command2 (str): The second shell command to execute, with 'command1' as its input.
+
+        RETURNS: The decoded output of 'command2' after piping 'command1' into it. If an error occurs, it prints an error message.
+    """
     try:
         process1 = subprocess.Popen(command1, stdout=subprocess.PIPE, shell=True)
         process2 = subprocess.Popen(command2, stdin=process1.stdout, stdout=subprocess.PIPE, shell=True)
@@ -549,6 +705,15 @@ def pipe_commands(command1, command2):
 
 
 def redirect_input_output(prompt):
+    """ 
+        OBJECTIVE: This function redirects input from a file to a specified shell command, then the output will be redirected to another file.
+
+        PARAMETERS:
+            - prompt (str): the inserted user input.
+
+        RETURNS: nothing.
+    """
+    
     # Command with both input and output redirection
     parts = prompt.split("<")
     command_and_input = parts[0].strip()
@@ -670,18 +835,6 @@ def main():
         else:
             execute_external(prompt)
 
-        # if prompt.lower() in internal_dict:
-        #    if prompt.lower() == "ls":
-        #        print(internal_dict[prompt.lower()]("*"))
-        #    else:
-        #        internal_dict[prompt.lower()]()
-        # if prompt.lower().__contains__(" "):
-        #    splitted = prompt.lower().split(" ")
-        #    if splitted[0] not in internal_dict:
-        #        continue
-
-
 if __name__ == "__main__":
-    internal_dict = {"dir": dir, "help": help_cmd, "exit": exit_cmd, "mkdir": mkdir}
     setup_enviroment_vars()
     main()
