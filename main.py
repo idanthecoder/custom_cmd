@@ -50,7 +50,7 @@ def print_credits():
         print("\n")
 
 
-def ls(pattern):
+def dir(pattern):
     try:
         res = glob.glob(pattern)
     except TypeError:
@@ -614,14 +614,14 @@ def main():
             execute_python_file(prompt)                
             
         # works with spaces
-        elif prompt.startswith("ls"):
+        elif prompt.startswith("dir"):
             try:
-                if prompt == "ls":
-                    print(ls(r"*"))
+                if prompt == "dir":
+                    print(dir(r"*"))
                 else:
-                    parameters = prompt[3:]
+                    parameters = prompt[4:]
                     os.chdir(parameters.lstrip())
-                    print(ls(r"*"))
+                    print(dir(r"*"))
                     os.chdir(original_dir)
             except OSError:
                 print("Invalid Syntax!")
@@ -687,6 +687,6 @@ def main():
 
 
 if __name__ == "__main__":
-    internal_dict = {"ls": ls, "help": help_cmd, "exit": exit_cmd, "mkdir": mkdir}
+    internal_dict = {"dir": dir, "help": help_cmd, "exit": exit_cmd, "mkdir": mkdir}
     setup_enviroment_vars()
     main()
