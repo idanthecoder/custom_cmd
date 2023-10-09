@@ -6,10 +6,6 @@ import platform
 import argparse
 import re
 
-#PATH = [r"c:\temp", r"c:\windows\..."]
-#
-#ENVIRONMENT_VALUES = subprocess.run("set", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,
-#                                    text=True).stdout.splitlines()
 
 def setup_enviroment_vars():
     global ENVIRONMENT_VALUES
