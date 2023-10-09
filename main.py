@@ -673,7 +673,6 @@ def main():
         
         else:
             execute_external(prompt)
-            pass
 
         # if prompt.lower() in internal_dict:
         #    if prompt.lower() == "ls":
