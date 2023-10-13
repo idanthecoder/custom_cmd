@@ -1,0 +1,15 @@
+ Volume in drive C has no label.
+ Volume Serial Number is CE8C-BE8F
+
+ Directory of C:\Users\user\vsprojects\custom_cmd
+
+13/10/2023  16:28    <DIR>          .
+13/10/2023  16:28    <DIR>          ..
+13/10/2023  15:40               267 echo.py
+13/10/2023  16:17                34 input.txt
+13/10/2023  15:50            32,392 main.py
+13/10/2023  16:29                 0 output.txt
+22/09/2023  16:55               116 README.md
+01/10/2023  16:51               100 rnd_num_gen.py
+               6 File(s)         32,909 bytes
+               2 Dir(s)  174,272,958,464 bytes free

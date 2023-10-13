@@ -3,6 +3,7 @@ import glob
 import subprocess
 import platform
 import re
+import time
 
 
 def setup_enviroment_vars():
@@ -22,7 +23,7 @@ def setup_enviroment_vars():
     ENVIRONMENT_VALUES.append("CODE_NAME=TYRANUS")
     ENVIRONMENT_VALUES.append("MEGA_NEO=TRUE")
     ENVIRONMENT_VALUES.append("INGANEU=ORLOGIN1")
-    # sort 
+
     ENVIRONMENT_VALUES.sort(key=str.casefold)
 
 
@@ -62,18 +63,28 @@ def print_credits():
         print("\n")
 
 
-def dir(pattern):
-    """
-    Objective: return all files and sub-directories matching a pattern in cwd (if exists).
-    Parameters: pattern (str).
-    Returns: string of all files and sub-directories matching a pattern in cwd.
-    """
-    
-    try:
-        res = glob.glob(pattern)
-    except TypeError:
-        res = []
-    return '\n'.join(res)
+#def ls(pattern):
+#    """
+#    Objective: return all files and sub-directories matching a pattern in cwd (if exists).
+#    Parameters: pattern (str).
+#    Returns: string of all files and sub-directories matching a pattern in cwd.
+#    """
+#    
+#    try:
+#        res = glob.glob(pattern)
+#    except TypeError:
+#        res = []
+#    return '\n'.join(res)
+
+
+def dir(path):
+    items = os.listdir(path) 
+    for item in items:
+        full_name = os.path.join(path,item)
+        if os.path.isfile(full_name):
+            print("%s\t\t%s \t%s" %(time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
+        else:
+            print("%s\t<Dir>\t\t%s" %(time.ctime(os.path.getmtime(full_name)), item))
 
 
 def remove_suffix_until_flag(word, flag):
@@ -634,8 +645,7 @@ def execute_external(command):
      
     try:
         # user input will be turned to list that will be run by the subprocess
-        command_and_params: list = command.split()
-        result = subprocess.run(command_and_params, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
         # Check if the command was successful (exit code 0)
         if result.returncode == 0:
@@ -660,7 +670,7 @@ def redirect_output_to_file(command, output_filename):
     """
     
     try:
-        with open(output_filename, "w") as output_file:
+        with open(output_filename, "w+") as output_file:
             subprocess.run(command, shell=True, stdout=output_file)
     except Exception as e:
         print(f"Error: {e}")
@@ -694,6 +704,7 @@ def pipe_commands(command1, command2):
 
         RETURNS: The decoded output of 'command2' after piping 'command1' into it. If an error occurs, it prints an error message.
     """
+    
     try:
         process1 = subprocess.Popen(command1, stdout=subprocess.PIPE, shell=True)
         process2 = subprocess.Popen(command2, stdin=process1.stdout, stdout=subprocess.PIPE, shell=True)
@@ -724,27 +735,19 @@ def redirect_input_output(prompt):
     try:
         with open(input_file, "r") as input_file:
             input_data = input_file.read()
+        
+        # Execute the command with input data and redirect output to the output file
+        with open(output_file, "w+") as output_file:
+            process = subprocess.Popen(command_and_input, shell=True, stdout=output_file, stderr=subprocess.PIPE, stdin=subprocess.PIPE, text=True)
+            process.communicate(input=input_data)
+
+        print("Command executed with input and output redirection.")
     except FileNotFoundError:
         print(f"Input file '{input_file}' not found.")
-        
-
-    # Execute the command with input data and redirect output to the output file
-    with open(output_file, "w") as output_file:
-        process = subprocess.Popen(
-            command_and_input,
-            shell=True,
-            stdout=output_file,
-            stderr=subprocess.PIPE,
-            stdin=subprocess.PIPE,
-            text=True
-        )
-        process.communicate(input=input_data)
-
-    print("Command executed with input and output redirection.")
 
 
 def main():
-    original_dir = os.getcwd()
+    #original_dir = os.getcwd()
     print_credits()
     run = True
     while run:
@@ -778,12 +781,12 @@ def main():
         elif prompt.startswith("dir"):
             try:
                 if prompt == "dir":
-                    print(dir(r"*"))
+                    dir(os.getcwd())
                 else:
                     parameters = prompt[4:]
-                    os.chdir(parameters.lstrip())
-                    print(dir(r"*"))
-                    os.chdir(original_dir)
+                    if not parameters.lower().startswith("c:\\"):
+                        parameters = f"{os.getcwd()}\{parameters}"
+                    dir(parameters.lstrip())
             except OSError:
                 print("Invalid Syntax!")
         # works with spaces
