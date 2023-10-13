@@ -77,14 +77,32 @@ def print_credits():
 #    return '\n'.join(res)
 
 
-def dir(path):
-    items = os.listdir(path) 
-    for item in items:
+def dir_cmd(parameter: str):
+    if os.path.isdir(parameter):
+        path = parameter
+        pattern = "*"
+    else:
+        parameter_lst = parameter.rsplit("\\", 1)
+        path = parameter_lst[0]
+        pattern = parameter_lst[1]
+
+    os.chdir(path)
+    in_dir_lst = glob.glob(pattern)
+    
+    for item in in_dir_lst:
         full_name = os.path.join(path,item)
         if os.path.isfile(full_name):
             print("%s\t\t%s \t%s" %(time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
         else:
             print("%s\t<Dir>\t\t%s" %(time.ctime(os.path.getmtime(full_name)), item))
+    
+    #items = os.listdir(path) 
+    #for item in items:
+    #    full_name = os.path.join(path,item)
+    #    if os.path.isfile(full_name):
+    #        print("%s\t\t%s \t%s" %(time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
+    #    else:
+    #        print("%s\t<Dir>\t\t%s" %(time.ctime(os.path.getmtime(full_name)), item))
 
 
 def remove_suffix_until_flag(word, flag):
@@ -655,7 +673,7 @@ def execute_external(command):
             print("Command failed:")
             print(result.stderr)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"'{command}' is not recognized as an internal or external command, operable program or batch file.")
 
 
 def redirect_output_to_file(command, output_filename):
@@ -747,7 +765,7 @@ def redirect_input_output(prompt):
 
 
 def main():
-    #original_dir = os.getcwd()
+    original_dir = os.getcwd()
     print_credits()
     run = True
     while run:
@@ -772,34 +790,37 @@ def main():
             file2 = params[1].lstrip().rstrip()
             print(pipe_commands(file1, file2))
         
-        elif prompt.endswith(".py"):
-            if prompt.removesuffix(".py") == "":
-                continue
-            execute_python_file(prompt)                
+        #elif prompt.endswith(".py"):
+        #    if prompt.removesuffix(".py") == "":
+        #        continue
+        #    execute_python_file(prompt)                
             
         # works with spaces
         elif prompt.startswith("dir"):
             try:
                 if prompt == "dir":
-                    dir(os.getcwd())
+                    dir_cmd(os.getcwd())
                 else:
                     parameters = prompt[4:]
                     if not parameters.lower().startswith("c:\\"):
                         parameters = f"{os.getcwd()}\{parameters}"
-                    dir(parameters.lstrip())
+                    dir_cmd(parameters.lstrip())
             except OSError:
                 print("Invalid Syntax!")
+            finally:
+                os.chdir(original_dir)
         # works with spaces
         elif prompt.startswith("exit"):
             exit_cmd()
         # works with spaces
         elif prompt.startswith("cd"):
             if prompt == "cd":
-                print(os.getcwd())
+                print(original_dir)
             else:
                 parameters = prompt[3:].lstrip()
                 try:
                     cd(parameters)
+                    original_dir = os.getcwd()
                 except IndexError:
                     print("Invalid Command!")
         # works with spaces
@@ -834,6 +855,15 @@ def main():
             if prompt.startswith("rename"):
                 inp = prompt[7:]
                 rename_files(inp)
+        
+        elif prompt.endswith(".py"):
+            if prompt.removesuffix(".py") == "":
+                continue
+            execute_python_file(prompt)
+        
+        # if input is only whitespaces or nothing
+        elif prompt == "":
+            continue
         
         else:
             execute_external(prompt)
