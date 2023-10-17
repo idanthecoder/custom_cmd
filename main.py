@@ -6,6 +6,9 @@ import re
 import time
 
 
+internal_lst = ["dir", "cd", "cls", "help", "mkdir", "rename", "exit", "set"]
+
+
 def setup_enviroment_vars():
     """
     Objective: declare a gloal variables that will store all of the environment variables.
@@ -764,6 +767,35 @@ def redirect_input_output(prompt):
         print(f"Input file '{input_file}' not found.")
 
 
+def run_process(param1: str, action: str, param2: str):
+    if action == "|":
+        value1 = None
+        value2 = None
+        if param1 in internal_lst:
+            command_param = param1.split()
+            if len(command_param) > 0:
+                value1 = command_param[0](*command_param[1:])
+            else:
+                value1 = command_param[0]()
+        if param2 in internal_lst:
+            command_param = param2.split()
+            if len(command_param) > 0:
+                value2 = command_param[0](*command_param[1:])
+            else:
+                value2 = command_param[0]()
+        
+        file1 = open("inp.txt", "w+")
+        file1.write(value1)
+        
+            
+        #else:
+        #    return pipe_commands(param1, param2)
+    if action == "<":
+        redirect_input_from_file(param1, param2)
+    if action == ">":
+        redirect_output_to_file(param1, param2)
+    
+
 def main():
     original_dir = os.getcwd()
     print_credits()
@@ -772,28 +804,46 @@ def main():
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
         
-        if prompt.__contains__(">") and prompt.__contains__("<"):
-            redirect_input_output(prompt)
-        elif prompt.__contains__(">"):
-            params = prompt.split(">")
-            file1 = params[0].lstrip().rstrip()
-            file2 = params[1].lstrip().rstrip()
-            redirect_output_to_file(file1, file2)
-        elif prompt.__contains__("<"):
-            params = prompt.split("<")
-            file1 = params[0].lstrip().rstrip()
-            file2 = params[1].lstrip().rstrip()
-            redirect_input_from_file(file1, file2)
-        elif prompt.__contains__("|"):
-            params = prompt.split("|")
-            file1 = params[0].lstrip().rstrip()
-            file2 = params[1].lstrip().rstrip()
-            print(pipe_commands(file1, file2))
+        if ">" in prompt or "<" in prompt or "|" in prompt:
+            redirections = []
+            commands = []
+            
+            if not (str(prompt[0])).isalpha() or not (str(prompt[-1])).isalpha():
+                print("Invalid syntax")
+                continue
+            
+            # Define a regular expression pattern with capturing groups
+            pattern = r"([^<|>]+)|([<|>])"
+
+            # Use re.findall to find all matches
+            matches = re.findall(pattern, prompt)
+
+            # Extract and print the matched substrings
+            for match in matches:
+                matched_string = match[0]
+                if matched_string:
+                    commands.append(matched_string.rstrip().lstrip()) 
+                
+                
+            # Define a regular expression pattern with capturing groups
+            pattern = r"([<|>])"
+
+            # Use re.findall to find all matches
+            matches = re.findall(pattern, prompt)
+
+            # Extract and print the matched substrings
+            for match in matches:
+                matched_string = match[0]
+                if matched_string:
+                    redirections.append(matched_string.rstrip().lstrip())
+            
+            for i in range(len(redirections)):
+                run_process(commands[i], redirections[i], commands[i+1])
         
-        #elif prompt.endswith(".py"):
-        #    if prompt.removesuffix(".py") == "":
-        #        continue
-        #    execute_python_file(prompt)                
+        elif prompt.endswith(".py"):
+            if prompt.removesuffix(".py") == "":
+                continue
+            execute_python_file(prompt)                
             
         # works with spaces
         elif prompt.startswith("dir"):
@@ -832,7 +882,7 @@ def main():
                 #print(set_cmd(split_data[1]))
                 parameters = prompt[4:].lstrip()
                 print(set_cmd(parameters))
-        # works with spaces
+        # works with spaces 
         elif prompt.startswith("cls"):
             cls()
         # works with spaces, but function is unfinished!
