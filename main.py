@@ -5,9 +5,9 @@ import platform
 import re
 import time
 
+
 internal_lst = ["dir", "cd", "cls", "help", "mkdir", "rename", "exit", "set"]
 original_dir = os.getcwd()
-ENVIRONMENT_VALUES = []
 
 
 def setup_enviroment_vars():
@@ -17,7 +17,10 @@ def setup_enviroment_vars():
     Returns: Nothing.
     """
 
+
     global ENVIRONMENT_VALUES
+    
+    ENVIRONMENT_VALUES = []
     # get all Windows environment variables
     for key, value in os.environ.items():
         ENVIRONMENT_VALUES.append(f"{key}={value}")
@@ -28,6 +31,9 @@ def setup_enviroment_vars():
     ENVIRONMENT_VALUES.append("INGANEU=ORLOGIN1")
 
     ENVIRONMENT_VALUES.sort(key=str.casefold)
+
+
+setup_enviroment_vars()
 
 
 def print_credits():
@@ -70,7 +76,7 @@ def dir_neo(parameter: str = ""):
     if parameter == "":
         parameter = os.getcwd()
 
-    parameter = parameter.lstrip().rstrip()
+    parameter = parameter.lower().lstrip().rstrip()
 
     if not parameter.lower().startswith("c:\\"):
         parameter = f"{os.getcwd()}\{parameter}"
@@ -122,7 +128,7 @@ def cd_neo(directory=""):
         return
 
     try:
-        directory = directory.lstrip().rstrip()
+        directory = directory.lower().lstrip().rstrip()
 
         if directory == "..":
             os.chdir(remove_suffix_until_flag(os.getcwd(), "\\"))
@@ -169,7 +175,7 @@ def set_neo(filt=""):
     global ENVIRONMENT_VALUES
     try:
         # Print the output of the 'set' command
-        filt = filt.lstrip().rstrip()
+        filt = filt.lower().lstrip().rstrip()
         if filt == "":
             print("\n".join(ENVIRONMENT_VALUES))
         elif filt.__contains__("="):
@@ -206,14 +212,17 @@ def exit_neo():
     exit(0)
 
 
-def help_neo(help):
+
+def help_neo(help=""):
     """
     Objective: print help texts for supported internal command.
     Parameters: help (str): specify specific helps.
     Returns: Nothing.
     """
+    
+    help = help.rstrip().lstrip()
 
-    if help == "help1":
+    if help == "":
         print(r'''For more information on a specific command, type HELP command-name
 
             CD             Displays the name of or changes the current directory.
@@ -542,7 +551,7 @@ def pwd():
     return input(f"{os.getcwd()}~> ")
 
 
-def mkdir_neo(path_and_name):
+def mkdir_neo(path_and_name=""):
     """
     OBJECTIVE: This function, 'mkdir', is designed to create a directory based on the provided 'path_and_name' argument
     or check if the directory already exists. It aims to handle directory creation and validation.
@@ -554,6 +563,16 @@ def mkdir_neo(path_and_name):
 
     RETURNS: Nothing.
     """
+    
+    
+    if path_and_name == "":
+        print("The syntax of the command is incorrect.")
+        return
+
+    if path_and_name[0] != " ":
+        print("Invalid Syntax!")
+    
+    path_and_name = path_and_name.lower().lstrip().rstrip()
 
     path = None
     parts = path_and_name.split()
@@ -579,7 +598,6 @@ def mkdir_neo(path_and_name):
                 print(f"Directory '{directory_name}' already exists at '{full_path}'.")
         except OSError:
             print("Directory path wasn't found!")
-            pass
 
 
 def clean_filename(filename):
@@ -593,7 +611,7 @@ def clean_filename(filename):
     return cleaned_name
 
 
-def rename_neo(inp):
+def rename_neo(inp=""):
     """
         OBJECTIVE: This function gets a file path and name and new name and rename the file.
 
@@ -603,9 +621,16 @@ def rename_neo(inp):
 
         RETURNS: nothing.
     """
+    
+    
+    if inp == "":
+        print("The syntax of the command is incorrect.")
+        return
+    
+    inp = inp.lower().lstrip().rstrip()
 
     # Split the input string into a list of strings
-    inputs = inp.split(" ")
+    inputs = inp.split()
 
     # Check if the first input is an absolute path (starts with 'c:\')
     if inputs[0].lower().startswith("c:\\"):
@@ -902,23 +927,25 @@ def main():
         # works with spaces, but function is unfinished!
         elif prompt.startswith("help"):
             if prompt == "help":
-                help_neo("help1")
+                help_neo()
             else:
                 comment_to_help = prompt[5:]
                 help_neo(comment_to_help)
                 pass
         elif prompt.startswith("mkdir"):
             if prompt == "mkdir":
-                print("The syntax of the command is incorrect.")
-            elif prompt[5] != " ":
-                print("Invalid Syntax!")
+                mkdir_neo()
+            #elif prompt[5] != " ":
+            #    print("Invalid Syntax!")
             else:
-                parameters = prompt[6:].lstrip().rstrip()
-                mkdir_neo(prompt[6:])
+                parameters = prompt[6:]
+                mkdir_neo(parameters)
         elif prompt.startswith("rename"):
-            if prompt.startswith("rename"):
-                inp = prompt[7:]
-                rename_neo(inp)
+            if prompt == "rename":
+                rename_neo()
+            else:
+                parameters = prompt[7:]
+                rename_neo(parameters)
 
         elif prompt.endswith(".py"):
             if prompt.removesuffix(".py") == "":
@@ -934,5 +961,4 @@ def main():
 
 
 if __name__ == "__main__":
-    setup_enviroment_vars()
     main()
