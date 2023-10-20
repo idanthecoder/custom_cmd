@@ -753,7 +753,7 @@ def pipe_commands(command1: str, command2: str):
             if params1 != "":
                 process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo("{params1}")'], stdout=subprocess.PIPE)
             else:
-                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo(*)'], stdout=subprocess.PIPE)
+                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo()'], stdout=subprocess.PIPE)
         else:
             process1 = subprocess.Popen(command1, stdout=subprocess.PIPE, shell=True)
             
@@ -762,13 +762,14 @@ def pipe_commands(command1: str, command2: str):
             if params2 != "":
                 process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo("{params2}")'], stdin=process1.stdout, stdout=subprocess.PIPE)
             else:
-                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo(*)'], stdin=process1.stdout, stdout=subprocess.PIPE)
+                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo()'], stdin=process1.stdout, stdout=subprocess.PIPE)
         else:
             process2 = subprocess.Popen(command2, stdin=process1.stdout, stdout=subprocess.PIPE, shell=True)
             
             
         process1.stdout.close()  # Close the output of the first command to prevent deadlocks
         output = process2.communicate()[0]
+        
         return output.decode("utf-8")
     except Exception as e:
         print(f"Error: {e}")
