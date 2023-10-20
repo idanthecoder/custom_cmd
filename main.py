@@ -5,7 +5,6 @@ import platform
 import re
 import time
 
-
 internal_lst = ["dir", "cd", "cls", "help", "mkdir", "rename", "exit", "set"]
 original_dir = os.getcwd()
 ENVIRONMENT_VALUES = []
@@ -17,10 +16,10 @@ def setup_enviroment_vars():
     Parameters: Nothing.
     Returns: Nothing.
     """
-    
+
     global ENVIRONMENT_VALUES
     # get all Windows environment variables
-    for key, value in  os.environ.items():
+    for key, value in os.environ.items():
         ENVIRONMENT_VALUES.append(f"{key}={value}")
     # our own environment variables
     ENVIRONMENT_VALUES.append("CMDNEO_VERSION=V7.10")
@@ -37,7 +36,7 @@ def print_credits():
     Parameters: Nothing.
     Returns: Nothing.
     """
-    
+
     print(r'''  ____  _          _ _   _   _ _____ ___                                             
  / ___|| |__   ___| | | | \ | | ____/ _ \                                            
  \___ \| '_ \ / _ \ | | |  \| |  _|| | | |                                           
@@ -67,15 +66,15 @@ def print_credits():
         print("\n")
 
 
-def dir_neo(parameter: str=""):
+def dir_neo(parameter: str = ""):
     if parameter == "":
         parameter = os.getcwd()
-        
+
     parameter = parameter.lstrip().rstrip()
-    
+
     if not parameter.lower().startswith("c:\\"):
         parameter = f"{os.getcwd()}\{parameter}"
-    
+
     if os.path.isdir(parameter):
         path = parameter
         pattern = "*"
@@ -86,13 +85,13 @@ def dir_neo(parameter: str=""):
 
     os.chdir(path)
     in_dir_lst = glob.glob(pattern)
-    
+
     for item in in_dir_lst:
-        full_name = os.path.join(path,item)
+        full_name = os.path.join(path, item)
         if os.path.isfile(full_name):
-            print("%s\t\t%s \t%s" %(time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
+            print("%s\t\t%s \t%s" % (time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
         else:
-            print("%s\t<Dir>\t\t%s" %(time.ctime(os.path.getmtime(full_name)), item))
+            print("%s\t<Dir>\t\t%s" % (time.ctime(os.path.getmtime(full_name)), item))
 
 
 def remove_suffix_until_flag(word, flag):
@@ -101,7 +100,7 @@ def remove_suffix_until_flag(word, flag):
     Parameters: word (str), flag (string).
     Returns: string of all files and sub-directories matching a pattern in cwd.
     """
-    
+
     new_word = []
     last_slash_pos = word.rindex(flag)
     for i in range(0, last_slash_pos):
@@ -115,17 +114,16 @@ def cd_neo(directory=""):
     Parameters: directory (str).
     Returns: Nothing.
     """
-    
+
     global original_dir
 
     if directory == "":
         print(original_dir)
         return
-    
+
     try:
         directory = directory.lstrip().rstrip()
-        
-        
+
         if directory == "..":
             os.chdir(remove_suffix_until_flag(os.getcwd(), "\\"))
         else:
@@ -145,7 +143,7 @@ def filter_lst(lst, filt):
     Parameters: lst (list), filt (string).
     Returns: string with all environment variables seperated by new lines.
     """
-    
+
     temp_lst = []
 
     for i in range(0, len(lst)):
@@ -160,15 +158,14 @@ def set_neo(filt=""):
         displaying all environment variables, adding new ones, or filtering them based on user input.
 
     PARAMETERS: filt (str): A string parameter representing the user's command or request related to environment variables.
-                    It can be empty (for displaying all variables), contain an equal sign (for adding a new variable), 
+                    It can be empty (for displaying all variables), contain an equal sign (for adding a new variable),
                     or serve as a filter string (for filtering variables).
 
     RETURNS: If filt is empty: Returns a string containing all environment variables joined with line breaks ("\n").
                 If filt contains an equal sign: Returns a message indicating successful variable addition.
                 If filt is neither empty nor contains an equal sign: Returns a filtered list of environment variables as a string.
     """
-    
-    
+
     global ENVIRONMENT_VALUES
     try:
         # Print the output of the 'set' command
@@ -192,7 +189,7 @@ def cls_neo():
     Parameters: Nothing.
     Returns: Nothing.
     """
-    
+
     if platform.system().lower() == 'windows':
         os.system('cls')
     else:
@@ -205,7 +202,7 @@ def exit_neo():
     Parameters: Nothing.
     Returns: Nothing.
     """
-    
+
     exit(0)
 
 
@@ -215,10 +212,10 @@ def help_neo(help):
     Parameters: help (str): specify specific helps.
     Returns: Nothing.
     """
-    
+
     if help == "help1":
         print(r'''For more information on a specific command, type HELP command-name
-        
+
             CD             Displays the name of or changes the current directory.
             CLS            Clears the screen.
             EXIT           Quits the CMD.EXE program (command interpreter).
@@ -236,7 +233,7 @@ def help_neo(help):
     CHDIR [..]
     CD [/D] [drive:][path]
     CD [..]
-    
+
     ..   Specifies that you want to change to the parent directory.
 
     Type CD drive: to display the current directory in the specified drive.
@@ -541,23 +538,23 @@ def pwd():
     Parameters: Nothing.
     Returns: Nothing.
     """
-    
+
     return input(f"{os.getcwd()}~> ")
 
 
 def mkdir_neo(path_and_name):
-    """  
+    """
     OBJECTIVE: This function, 'mkdir', is designed to create a directory based on the provided 'path_and_name' argument
     or check if the directory already exists. It aims to handle directory creation and validation.
-    
+
     PARAMETERS:
     - path_and_name (str): A string representing a directory path and name. It can be either a directory name or a full path.
                             If it's a directory name, the function assumes the current working directory.
                             If it's a full path, the function uses that path for directory operations.
-                            
+
     RETURNS: Nothing.
     """
-    
+
     path = None
     parts = path_and_name.split()
 
@@ -591,7 +588,7 @@ def clean_filename(filename):
     Parameters: filename (str).
     Returns: pure filename.
     """
-    
+
     cleaned_name = re.sub(r'', '', filename)
     return cleaned_name
 
@@ -606,7 +603,7 @@ def rename_neo(inp):
 
         RETURNS: nothing.
     """
-    
+
     # Split the input string into a list of strings
     inputs = inp.split(" ")
 
@@ -641,7 +638,7 @@ def rename_neo(inp):
 
 
 def execute_python_file(script_name):
-    """ 
+    """
         OBJECTIVE: This function executes a Python script specified by 'script_name' using the 'python' command.
 
         PARAMETERS:
@@ -649,7 +646,7 @@ def execute_python_file(script_name):
 
         RETURNS: nothing.
     """
-    
+
     try:
         # Run the Python script using subprocess
         subprocess.run(['python', script_name], check=True)
@@ -658,19 +655,19 @@ def execute_python_file(script_name):
 
 
 def execute_external(command):
-    """ 
+    """
         OBJECTIVE: This function executes an external shell command specified in 'command' and captures its output and error messages.
 
         PARAMETERS:
 	        - command (str): The shell command to execute along with its parameters, provided as a single string.
 
-        RETURNS: nothing. 
+        RETURNS: nothing.
      """
-     
+
     try:
         # user input will be turned to list that will be run by the subprocess
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        
+
         # Check if the command was successful (exit code 0)
         if result.returncode == 0:
             print("Command output:")
@@ -683,7 +680,7 @@ def execute_external(command):
 
 
 def redirect_output_to_file(command, output_filename):
-    """ 
+    """
     OBJECTIVE: This function redirects output from specified shell command to a file.
 
     PARAMETERS:
@@ -692,7 +689,7 @@ def redirect_output_to_file(command, output_filename):
 
     RETURNS: nothing.
     """
-    
+
     try:
         with open(output_filename, "w+") as output_file:
             subprocess.run(command, shell=True, stdout=output_file)
@@ -701,7 +698,7 @@ def redirect_output_to_file(command, output_filename):
 
 
 def redirect_input_from_file(command, input_filename):
-    """ 
+    """
         OBJECTIVE: This function redirects input from a file to a specified shell command.
 
         PARAMETERS:
@@ -710,13 +707,13 @@ def redirect_input_from_file(command, input_filename):
 
         RETURNS: nothing.
     """
-    
+
     try:
         with open(input_filename, "r") as input_file:
             subprocess.run(command, shell=True, stdin=input_file)
     except Exception as e:
         print(f"Error: {e}")
-        
+
 
 def pipe_commands(command1: str, command2: str):
     """
@@ -728,56 +725,55 @@ def pipe_commands(command1: str, command2: str):
 
         RETURNS: The decoded output of 'command2' after piping 'command1' into it. If an error occurs, it prints an error message.
     """
-    
-    
-    #try:
+
+    # try:
     #    process1 = subprocess.Popen(command1, stdout=subprocess.PIPE, shell=True)
     #    process2 = subprocess.Popen(command2, stdin=process1.stdout, stdout=subprocess.PIPE, shell=True)
     #    process1.stdout.close()  # Close the output of the first command to prevent deadlocks
     #    output = process2.communicate()[0]
     #    return output.decode("utf-8")
-    #except Exception as e:
+    # except Exception as e:
     #    print(f"Error: {e}")
     command_param1 = command1.split()
     command_param2 = command2.split()
-    
+
     comm1 = command_param1[0]
     params1 = " ".join(command_param1[1:])
-    
-    
+
     comm2 = command_param2[0]
     params2 = " ".join(command_param2[1:])
-    
-    
+
     try:
         if comm1 in internal_lst:
             if params1 != "":
-                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo("{params1}")'], stdout=subprocess.PIPE)
+                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo("{params1}")'],
+                                            stdout=subprocess.PIPE)
             else:
-                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo()'], stdout=subprocess.PIPE)
+                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo()'],
+                                            stdout=subprocess.PIPE)
         else:
             process1 = subprocess.Popen(command1, stdout=subprocess.PIPE, shell=True)
-            
-            
+
         if comm2 in internal_lst:
             if params2 != "":
-                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo("{params2}")'], stdin=process1.stdout, stdout=subprocess.PIPE)
+                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo("{params2}")'],
+                                            stdin=process1.stdout, stdout=subprocess.PIPE)
             else:
-                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo()'], stdin=process1.stdout, stdout=subprocess.PIPE)
+                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo()'], stdin=process1.stdout,
+                                            stdout=subprocess.PIPE)
         else:
             process2 = subprocess.Popen(command2, stdin=process1.stdout, stdout=subprocess.PIPE, shell=True)
-            
-            
+
         process1.stdout.close()  # Close the output of the first command to prevent deadlocks
         output = process2.communicate()[0]
-        
+
         return output.decode("utf-8")
     except Exception as e:
         print(f"Error: {e}")
 
 
 def redirect_input_output(prompt):
-    """ 
+    """
         OBJECTIVE: This function redirects input from a file to a specified shell command, then the output will be redirected to another file.
 
         PARAMETERS:
@@ -785,7 +781,7 @@ def redirect_input_output(prompt):
 
         RETURNS: nothing.
     """
-    
+
     # Command with both input and output redirection
     parts = prompt.split("<")
     command_and_input = parts[0].strip()
@@ -796,10 +792,11 @@ def redirect_input_output(prompt):
     try:
         with open(input_file, "r") as input_file:
             input_data = input_file.read()
-        
+
         # Execute the command with input data and redirect output to the output file
         with open(output_file, "w+") as output_file:
-            process = subprocess.Popen(command_and_input, shell=True, stdout=output_file, stderr=subprocess.PIPE, stdin=subprocess.PIPE, text=True)
+            process = subprocess.Popen(command_and_input, shell=True, stdout=output_file, stderr=subprocess.PIPE,
+                                       stdin=subprocess.PIPE, text=True)
             process.communicate(input=input_data)
 
         print("Command executed with input and output redirection.")
@@ -814,15 +811,15 @@ def main():
     while run:
         prompt = pwd()
         prompt = prompt.lower().lstrip().rstrip()
-        
+
         if ">" in prompt or "<" in prompt or "|" in prompt:
             redirections = []
             commands = []
-            
+
             if not (str(prompt[0])).isalpha() or not (str(prompt[-1])).isalpha():
                 print("Invalid syntax")
                 continue
-            
+
             # Define a regular expression pattern with capturing groups
             pattern = r"([^<|>]+)|([<|>])"
 
@@ -833,10 +830,9 @@ def main():
             for match in matches:
                 matched_string = match[0]
                 if matched_string:
-                    commands.append(matched_string.rstrip().lstrip()) 
-                
-                
-            # Define a regular expression pattern with capturing groups
+                    commands.append(matched_string.rstrip().lstrip())
+
+                    # Define a regular expression pattern with capturing groups
             pattern = r"([<|>])"
 
             # Use re.findall to find all matches
@@ -847,26 +843,26 @@ def main():
                 matched_string = match[0]
                 if matched_string:
                     redirections.append(matched_string.rstrip().lstrip())
-            
+
             if redirections[0] == "|":
                 print(pipe_commands(commands[0], commands[1]))
-            
-            #for i in range(len(redirections)):
-            #    run_process(commands[i], redirections[i], commands[i+1]) 
-            
+
+            # for i in range(len(redirections)):
+            #    run_process(commands[i], redirections[i], commands[i+1])
+
             #
-            #thread_lst = []
+            # thread_lst = []
             #
-            #for i in range(len(commands)):
+            # for i in range(len(commands)):
             #    thread_lst.append(threading.Thread(target=run_process, args=(commands[i],)))
-        
-            
+
+
         elif prompt.endswith(".py"):
             if prompt.removesuffix(".py") == "":
                 continue
-            execute_python_file(prompt)                
-            
-        # works with spaces
+            execute_python_file(prompt)
+
+            # works with spaces
         elif prompt.startswith("dir"):
             try:
                 if prompt == "dir":
@@ -888,10 +884,10 @@ def main():
             else:
                 parameters = prompt[3:]
                 cd_neo(parameters)
-                #try:
+                # try:
                 #    cd_neo(parameters)
                 #    original_dir = os.getcwd()
-                #except IndexError:
+                # except IndexError:
                 #    print("Invalid Command!")
         # works with spaces
         elif prompt.startswith("set"):
@@ -900,7 +896,7 @@ def main():
             else:
                 parameters = prompt[4:]
                 set_neo(parameters)
-        # works with spaces 
+        # works with spaces
         elif prompt.startswith("cls"):
             cls_neo()
         # works with spaces, but function is unfinished!
@@ -923,18 +919,19 @@ def main():
             if prompt.startswith("rename"):
                 inp = prompt[7:]
                 rename_neo(inp)
-        
+
         elif prompt.endswith(".py"):
             if prompt.removesuffix(".py") == "":
                 continue
             execute_python_file(prompt)
-        
+
         # if input is only whitespaces or nothing
         elif prompt == "":
             continue
-        
+
         else:
             execute_external(prompt)
+
 
 if __name__ == "__main__":
     setup_enviroment_vars()
