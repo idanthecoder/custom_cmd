@@ -185,7 +185,23 @@ def set_neo(filt=""):
         if filt == "":
             print("\n".join(ENVIRONMENT_VALUES))
         elif filt.__contains__("="):
-            ENVIRONMENT_VALUES.append(filt)
+            filt_split = filt.split("=")
+            comm = filt_split[0]
+            
+            comms = []
+            for env in ENVIRONMENT_VALUES:
+                comms.append(env.split("=")[0])
+            
+            flag = False
+            for i in range(len(comms)):
+                if comms[i] == comm:
+                    ENVIRONMENT_VALUES[i] = filt
+                    flag = True
+                    break
+                
+            if not flag:
+                ENVIRONMENT_VALUES.append(filt)
+                
             ENVIRONMENT_VALUES.sort(key=str.casefold)
             print("Added variable to environment")
         else:
