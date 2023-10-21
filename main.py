@@ -770,8 +770,8 @@ def pipe_commands(command1: str, command2: str):
     #    return output.decode("utf-8")
     # except Exception as e:
     #    print(f"Error: {e}")
-    command1 = command1.lower().lstrip().rstrip()
-    command2 = command2.lower().lstrip().rstrip()
+    command1 = command1.lstrip().rstrip()
+    command2 = command2.lstrip().rstrip()
     
     internal_lst_w_params = []
     
@@ -794,10 +794,10 @@ def pipe_commands(command1: str, command2: str):
     command_param1 = command1.split()
     command_param2 = command2.split()
 
-    comm1 = command_param1[0]
+    comm1 = command_param1[0].lower()
     params1 = " ".join(command_param1[1:])
 
-    comm2 = command_param2[0]
+    comm2 = command_param2[0].lower()
     params2 = " ".join(command_param2[1:])
     
 
@@ -868,27 +868,25 @@ def main():
     run = True
     while run:
         prompt = pwd()
+        real_prompt = prompt.lstrip().rstrip()
         prompt = prompt.lower().lstrip().rstrip()
 
         if ">" in prompt or "<" in prompt or "|" in prompt:
             redirections = []
             commands = []
 
-            if not (str(prompt[0])).isalpha():
+            if (str(prompt[0])) in "|<>":
                 print("Invalid syntax")
                 continue
-            if not (str(prompt[-1])).isalpha():
-                if str(prompt[-1]) == "*" or str(prompt[-1]) == ".":
-                    pass
-                else:
-                    print("Invalid syntax")
-                    continue
+            if (str(prompt[-1])) in "|<>":
+                print("Invalid syntax")
+                continue
                     
             # Define a regular expression pattern with capturing groups
             pattern = r"([^<|>]+)|([<|>])"
 
             # Use re.findall to find all matches
-            matches = re.findall(pattern, prompt)
+            matches = re.findall(pattern, real_prompt)
 
             # Extract and print the matched substrings
             for match in matches:
@@ -900,7 +898,7 @@ def main():
             pattern = r"([<|>])"
 
             # Use re.findall to find all matches
-            matches = re.findall(pattern, prompt)
+            matches = re.findall(pattern, real_prompt)
 
             # Extract and print the matched substrings
             for match in matches:
