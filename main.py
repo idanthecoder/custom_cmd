@@ -7,6 +7,7 @@ import time
 
 
 internal_lst = ["dir", "cd", "cls", "help", "mkdir", "rename", "exit", "set"]
+current_dir = os.getcwd()
 original_dir = os.getcwd()
 
 
@@ -73,31 +74,36 @@ def print_credits():
 
 
 def dir_neo(parameter: str = ""):
-    if parameter == "":
-        parameter = os.getcwd()
+    try:
+        if parameter == "":
+            parameter = current_dir
 
-    parameter = parameter.lower().lstrip().rstrip()
+        parameter = parameter.lower().lstrip().rstrip()
 
-    if not parameter.lower().startswith("c:\\"):
-        parameter = f"{os.getcwd()}\{parameter}"
+        if not parameter.lower().startswith("c:\\"):
+            parameter = f"{os.getcwd()}\{parameter}"
 
-    if os.path.isdir(parameter):
-        path = parameter
-        pattern = "*"
-    else:
-        parameter_lst = parameter.rsplit("\\", 1)
-        path = parameter_lst[0]
-        pattern = parameter_lst[1]
-
-    os.chdir(path)
-    in_dir_lst = glob.glob(pattern)
-
-    for item in in_dir_lst:
-        full_name = os.path.join(path, item)
-        if os.path.isfile(full_name):
-            print("%s\t\t%s \t%s" % (time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
+        if os.path.isdir(parameter):
+            path = parameter
+            pattern = "*"
         else:
-            print("%s\t<Dir>\t\t%s" % (time.ctime(os.path.getmtime(full_name)), item))
+            parameter_lst = parameter.rsplit("\\", 1)
+            path = parameter_lst[0]
+            pattern = parameter_lst[1]
+
+        os.chdir(path)
+        in_dir_lst = glob.glob(pattern)
+
+        for item in in_dir_lst:
+            full_name = os.path.join(path, item)
+            if os.path.isfile(full_name):
+                print("%s\t\t%s \t%s" % (time.ctime(os.path.getmtime(full_name)), str(os.path.getsize(full_name)), item))
+            else:
+                print("%s\t<Dir>\t\t%s" % (time.ctime(os.path.getmtime(full_name)), item))
+    except OSError:
+        print("Invalid Syntax!")
+    finally:
+        os.chdir(current_dir)
 
 
 def remove_suffix_until_flag(word, flag):
@@ -121,10 +127,10 @@ def cd_neo(directory=""):
     Returns: Nothing.
     """
 
-    global original_dir
+    global current_dir
 
     if directory == "":
-        print(original_dir)
+        print(current_dir)
         return
 
     try:
@@ -140,7 +146,7 @@ def cd_neo(directory=""):
     except IndexError:
         print("Invalid Command!")
     finally:
-        original_dir = os.getcwd()
+        current_dir = os.getcwd()
 
 
 def filter_lst(lst, filt):
@@ -568,9 +574,6 @@ def mkdir_neo(path_and_name=""):
     if path_and_name == "":
         print("The syntax of the command is incorrect.")
         return
-
-    if path_and_name[0] != " ":
-        print("Invalid Syntax!")
     
     path_and_name = path_and_name.lower().lstrip().rstrip()
 
@@ -722,6 +725,14 @@ def redirect_output_to_file(command, output_filename):
         print(f"Error: {e}")
 
 
+def put_in_file(text, output_filename):
+    try:
+        with open(output_filename, "w+") as output_file:
+            output_file.write(text)
+    except Exception as e:
+        print(f"Error: {e}")
+            
+
 def redirect_input_from_file(command, input_filename):
     """
         OBJECTIVE: This function redirects input from a file to a specified shell command.
@@ -759,6 +770,27 @@ def pipe_commands(command1: str, command2: str):
     #    return output.decode("utf-8")
     # except Exception as e:
     #    print(f"Error: {e}")
+    command1 = command1.lower().lstrip().rstrip()
+    command2 = command2.lower().lstrip().rstrip()
+    
+    internal_lst_w_params = []
+    
+    for inter_command in internal_lst:
+        if inter_command != "cls" and inter_command != "exit":
+            internal_lst_w_params.append(inter_command)
+        
+    
+    for inter_command in internal_lst_w_params:
+        if command1.startswith(inter_command):
+            if len(inter_command) < len(command1) and command1[len(inter_command)] != " ":
+                return "Invalid Syntax!"
+    
+    for inter_command in internal_lst:
+        if command2.startswith(inter_command):
+            if len(inter_command) < len(command2) and command2[len(inter_command)] != " ":
+                return "Invalid Syntax!"
+    
+    
     command_param1 = command1.split()
     command_param2 = command2.split()
 
@@ -767,11 +799,12 @@ def pipe_commands(command1: str, command2: str):
 
     comm2 = command_param2[0]
     params2 = " ".join(command_param2[1:])
+    
 
     try:
         if comm1 in internal_lst:
             if params1 != "":
-                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo("{params1}")'],
+                process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo(r"{params1}")'],
                                             stdout=subprocess.PIPE)
             else:
                 process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo()'],
@@ -781,7 +814,7 @@ def pipe_commands(command1: str, command2: str):
 
         if comm2 in internal_lst:
             if params2 != "":
-                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo("{params2}")'],
+                process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo(r"{params2}")'],
                                             stdin=process1.stdout, stdout=subprocess.PIPE)
             else:
                 process2 = subprocess.Popen(['python', '-c', f'import main; main.{comm2}_neo()'], stdin=process1.stdout,
@@ -830,7 +863,7 @@ def redirect_input_output(prompt):
 
 
 def main():
-    global original_dir
+    global current_dir
     print_credits()
     run = True
     while run:
@@ -841,10 +874,16 @@ def main():
             redirections = []
             commands = []
 
-            if not (str(prompt[0])).isalpha() or not (str(prompt[-1])).isalpha():
+            if not (str(prompt[0])).isalpha():
                 print("Invalid syntax")
                 continue
-
+            if not (str(prompt[-1])).isalpha():
+                if str(prompt[-1]) == "*" or str(prompt[-1]) == ".":
+                    pass
+                else:
+                    print("Invalid syntax")
+                    continue
+                    
             # Define a regular expression pattern with capturing groups
             pattern = r"([^<|>]+)|([<|>])"
 
@@ -869,18 +908,16 @@ def main():
                 if matched_string:
                     redirections.append(matched_string.rstrip().lstrip())
 
+            if len(redirections) > 1 and redirections[0] == "|" and redirections[1] == ">":
+                put_in_file(pipe_commands(commands[0], commands[1]), commands[2])
+                continue
+            
             if redirections[0] == "|":
                 print(pipe_commands(commands[0], commands[1]))
-
-            # for i in range(len(redirections)):
-            #    run_process(commands[i], redirections[i], commands[i+1])
-
-            #
-            # thread_lst = []
-            #
-            # for i in range(len(commands)):
-            #    thread_lst.append(threading.Thread(target=run_process, args=(commands[i],)))
-
+            elif redirections[0] == ">":
+                redirect_output_to_file(commands[0], commands[1])
+            elif redirections[0] == "<":
+                redirect_input_from_file(commands[0], commands[1])
 
         elif prompt.endswith(".py"):
             if prompt.removesuffix(".py") == "":
@@ -892,13 +929,15 @@ def main():
             try:
                 if prompt == "dir":
                     dir_neo("")
+                elif prompt[3] != " ":
+                    print("Invalid Syntax!")
                 else:
                     parameters = prompt[4:]
                     dir_neo(parameters)
             except OSError:
                 print("Invalid Syntax!")
             finally:
-                os.chdir(original_dir)
+                os.chdir(current_dir)
         # works with spaces
         elif prompt.startswith("exit"):
             exit_neo()
@@ -906,18 +945,17 @@ def main():
         elif prompt.startswith("cd"):
             if prompt == "cd":
                 cd_neo()
+            elif prompt[2] != " ":
+                print("Invalid Syntax!")
             else:
                 parameters = prompt[3:]
                 cd_neo(parameters)
-                # try:
-                #    cd_neo(parameters)
-                #    original_dir = os.getcwd()
-                # except IndexError:
-                #    print("Invalid Command!")
         # works with spaces
         elif prompt.startswith("set"):
             if prompt == "set":
                 set_neo()
+            elif prompt[3] != " ":
+                print("Invalid Syntax!")
             else:
                 parameters = prompt[4:]
                 set_neo(parameters)
@@ -928,6 +966,8 @@ def main():
         elif prompt.startswith("help"):
             if prompt == "help":
                 help_neo()
+            elif prompt[4] != " ":
+                print("Invalid Syntax!")
             else:
                 comment_to_help = prompt[5:]
                 help_neo(comment_to_help)
@@ -935,14 +975,16 @@ def main():
         elif prompt.startswith("mkdir"):
             if prompt == "mkdir":
                 mkdir_neo()
-            #elif prompt[5] != " ":
-            #    print("Invalid Syntax!")
+            elif prompt[5] != " ":
+                print("Invalid Syntax!")
             else:
                 parameters = prompt[6:]
                 mkdir_neo(parameters)
         elif prompt.startswith("rename"):
             if prompt == "rename":
                 rename_neo()
+            elif prompt[6] != " ":
+                print("Invalid Syntax!")
             else:
                 parameters = prompt[7:]
                 rename_neo(parameters)
