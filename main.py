@@ -191,7 +191,7 @@ def set_neo(filt=""):
             comms = []
             for env in ENVIRONMENT_VALUES:
                 comms.append(env.split("=")[0])
-            
+            # replacing the value of the environment element if it already exists
             flag = False
             for i in range(len(comms)):
                 if comms[i] == comm:
@@ -819,6 +819,9 @@ def pipe_commands(command1: str, command2: str):
 
     try:
         if comm1 in internal_lst:
+            # subprocess.Popen import main; 
+            # is to access the functions that we made instead of using 
+            # the shell to execute the internals of windows
             if params1 != "":
                 process1 = subprocess.Popen(['python', '-c', f'import main; main.{comm1}_neo(r"{params1}")'],
                                             stdout=subprocess.PIPE)
